@@ -5,10 +5,10 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import no.artorp.profileio.javafx.FactorioInstallations;
+import no.artorp.profileio.javafx.FactorioInstallation;
 import no.artorp.profileio.javafx.Profile;
 
-public class FacNameCell extends TableCell<FactorioInstallations, String> {
+public class FacNameCell extends TableCell<FactorioInstallation, String> {
 	
 	private TextField textField = new TextField();
 	private ObservableList<Profile> mainTableViewData;
@@ -86,7 +86,7 @@ public class FacNameCell extends TableCell<FactorioInstallations, String> {
 			return;
 		}
 		
-		FactorioInstallations fi = (FactorioInstallations) getTableRow().getItem();
+		FactorioInstallation fi = (FactorioInstallation) getTableRow().getItem();
 		
 		
 		String oldValue = fi.getName();
@@ -107,10 +107,10 @@ public class FacNameCell extends TableCell<FactorioInstallations, String> {
 	}
 	
 	private boolean nameAlreadyInUse(String name) {
-		FactorioInstallations fi = (FactorioInstallations) getTableRow().getItem();
+		FactorioInstallation fi = (FactorioInstallation) getTableRow().getItem();
 
 		if (fi != null) {
-			for (FactorioInstallations f : getTableView().getItems()) {
+			for (FactorioInstallation f : getTableView().getItems()) {
 				if (!f.equals(fi)) {
 					if (name.equalsIgnoreCase(f.getName())) {
 						// Name conflict

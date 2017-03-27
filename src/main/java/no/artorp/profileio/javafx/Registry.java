@@ -2,6 +2,8 @@ package no.artorp.profileio.javafx;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -32,8 +34,10 @@ public class Registry {
 	private ObjectProperty<Profile> activeProfile = new SimpleObjectProperty<>();
 	private StringProperty stringPathFileConverter = new SimpleStringProperty(); // This isn't exposed through getters
 	
-	private ObservableList<FactorioInstallations> factorioInstallations = FXCollections.observableArrayList();
+	private ObservableList<FactorioInstallation> factorioInstallations = FXCollections.observableArrayList();
 	private ObservableList<KeyValuePair<String, String>> profileToFactorioName = FXCollections.observableArrayList();
+	
+	private List<Profile> profiles = new ArrayList<>();
 	
 	
 	
@@ -103,8 +107,8 @@ public class Registry {
 		
 	}
 	
-	public FactorioInstallations findInstallationFromFactorioName(String name) {
-		for (FactorioInstallations fi : factorioInstallations) {
+	public FactorioInstallation findInstallation(String name) {
+		for (FactorioInstallation fi : factorioInstallations) {
 			if (fi.getName().equals(name)) {
 				return fi;
 			}
@@ -112,7 +116,7 @@ public class Registry {
 		return null;
 	}
 	
-	public String findFactorioNameFromProfileName(String name) {
+	public String findGameName(String name) {
 		for (KeyValuePair<String, String> pair : profileToFactorioName) {
 			if (pair.getKey().equals(name)) {
 				return pair.getValue();
@@ -217,11 +221,11 @@ public class Registry {
 		return this.activeProfile.getValue();
 	}
 
-	public ObservableList<FactorioInstallations> getFactorioInstallations() {
+	public ObservableList<FactorioInstallation> getFactorioInstallations() {
 		return factorioInstallations;
 	}
 
-	public void setFactorioInstallations(ObservableList<FactorioInstallations> factorioInstallations) {
+	public void setFactorioInstallations(ObservableList<FactorioInstallation> factorioInstallations) {
 		this.factorioInstallations = factorioInstallations;
 	}
 
@@ -233,5 +237,8 @@ public class Registry {
 		this.profileToFactorioName = profileToFactorioName;
 	}
 	
+	public List<Profile> getProfiles() {
+		return this.profiles;
+	}
 	
 }

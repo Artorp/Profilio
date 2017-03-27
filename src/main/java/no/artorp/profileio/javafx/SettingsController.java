@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+import javafx.beans.Observable;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
@@ -49,9 +50,9 @@ public class SettingsController {
 	
 	@FXML private CheckBox checkBoxClose;
 	
-	@FXML private TableView<FactorioInstallations> tableViewInstallations;
-	@FXML private TableColumn<FactorioInstallations, String> columnName;
-	@FXML private TableColumn<FactorioInstallations, String> columnDir;
+	@FXML private TableView<FactorioInstallation> tableViewInstallations;
+	@FXML private TableColumn<FactorioInstallation, String> columnName;
+	@FXML private TableColumn<FactorioInstallation, String> columnDir;
 	
 	private ObservableList<Profile> mainTableViewData;
 	
@@ -292,7 +293,7 @@ public class SettingsController {
 		checkBoxClose.selectedProperty().bindBidirectional(myRegistry.closeOnLaunchProperty());
 		
 		// Factorio installation tableview
-		ObservableList<FactorioInstallations> tableData = myRegistry.getFactorioInstallations();
+		ObservableList<FactorioInstallation> tableData = myRegistry.getFactorioInstallations();
 		
 		columnName.setCellValueFactory(cellFeatures->cellFeatures.getValue().nameProperty());
 		columnName.setCellFactory(tableCol->new FacNameCell(this.mainTableViewData));
@@ -301,6 +302,18 @@ public class SettingsController {
 		
 		
 		tableViewInstallations.setItems(tableData);
+		
+		// Evaluate profiles, then evaluate launch button
+		tableData.addListener((Observable observable) -> {
+			for (Profile p : mainTableViewData) {
+				if (p.getFactorioVersion() != null) {
+					FactorioInstallation validVersion = myRegistry.findInstallation(p.getFactorioVersion());
+					p.setFactorioInstallation(validVersion);
+				}
+			}
+			
+			mainController.evaluateLaunchButtonState();
+		});
 		
 		
 		tableViewInstallations.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
@@ -342,7 +355,7 @@ public class SettingsController {
 				} else {
 					return; // User cancelled
 				}
-				FactorioInstallations fi = new FactorioInstallations();
+				FactorioInstallation fi = new FactorioInstallation();
 				fi.setName(name);
 				fi.setPath(newFactorioExecutable.toPath());
 				myRegistry.getFactorioInstallations().add(fi);
@@ -351,14 +364,14 @@ public class SettingsController {
 		});
 		
 		buttonRemoveEntry.setOnAction(event->{
-			FactorioInstallations fi = tableViewInstallations.getSelectionModel().getSelectedItem();
+			FactorioInstallation fi = tableViewInstallations.getSelectionModel().getSelectedItem();
 			if (fi != null) {
 				myRegistry.getFactorioInstallations().remove(fi);
 			}
 		});
 		
 		buttonBrowse.setOnAction(event->{
-			FactorioInstallations fi = tableViewInstallations.getSelectionModel().getSelectedItem();
+			FactorioInstallation fi = tableViewInstallations.getSelectionModel().getSelectedItem();
 			if (fi != null) {
 				URI toBrowse = fi.getPath().getParent().toUri();
 				System.out.println("Attempting to browse "+toBrowse);
@@ -379,7 +392,7 @@ public class SettingsController {
 		if (myRegistry.getMoveMethod() == null || myRegistry.getMoveMethod() == 0) {
 			Alert alert = new Alert(AlertType.INFORMATION);
 			alert.setHeaderText(null);
-			alert.setContentText("No move method chosen, select either copy, junction, or symlink.");
+			alert.setContentText("No move method chosen, select either rename, junction, or symlink.");
 			alert.showAndWait();
 			return false;
 		}
@@ -487,7 +500,7 @@ public class SettingsController {
 	}
 	
 	private boolean installNameAlreadyInUse(String name) {
-		for (FactorioInstallations f : this.tableViewInstallations.getItems()) {
+		for (FactorioInstallation f : this.tableViewInstallations.getItems()) {
 			if (name.equalsIgnoreCase(f.getName())) {
 				// Name conflict
 				return true;
