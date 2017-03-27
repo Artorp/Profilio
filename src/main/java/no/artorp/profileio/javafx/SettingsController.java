@@ -3,6 +3,7 @@ package no.artorp.profileio.javafx;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -357,11 +358,9 @@ public class SettingsController {
 		buttonBrowse.setOnAction(event->{
 			FactorioInstallations fi = tableViewInstallations.getSelectionModel().getSelectedItem();
 			if (fi != null) {
-				try {
-					Desktop.getDesktop().browse(fi.getPath().getParent().toUri());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				URI toBrowse = fi.getPath().getParent().toUri();
+				System.out.println("Attempting to browse "+toBrowse);
+				FileIO.browse(toBrowse);
 			}
 		});
 		
@@ -403,13 +402,9 @@ public class SettingsController {
 			
 			Optional<ButtonType> result = alert.showAndWait();
 			if (result.get() == browseDir) {
-				try {
-					Desktop.getDesktop().browse(
-							myRegistry.getFactorioDataPath().toUri()
-							);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				URI toBrowse = myRegistry.getFactorioDataPath().toUri();
+				System.out.println("Attempting to browse "+toBrowse);
+				FileIO.browse(toBrowse);
 			}
 			
 			return false;

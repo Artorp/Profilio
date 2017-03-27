@@ -1,14 +1,20 @@
 package no.artorp.profileio.utility;
 
+import java.awt.Desktop;
+import java.awt.Desktop.Action;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import no.artorp.profileio.exceptions.FactorioProfileManagerException;
+import no.artorp.profileio.javafx.ExceptionDialog;
 import no.artorp.profileio.javafx.Registry;
 
 public class FileIO {
@@ -364,6 +370,39 @@ public class FileIO {
 		} else if (moveMethod.intValue() == METHOD_MOVE) {
 			performProfileMove(copyFrom, factorioUserData);
 		}
+	}
+	
+	/**
+	 * Browse uri if Desktop supported
+	 * 
+	 * @param uri
+	 * @return {@code true} if succeeded, {@code false otherwise}
+	 */
+	public static boolean browse(URI uri) {
+		if (! canBrowse()) {
+			Alert alert = new Alert(AlertType.INFORMATION,
+					"Browsing throught Desktop.getDesktop().browse(URI) not supported on this platform");
+			alert.showAndWait();
+			return false;
+		}
+		try {
+			Desktop.getDesktop().browse(uri);
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			Alert alert = new ExceptionDialog(e, "Error when attempting to browse");
+			alert.showAndWait();
+		}
+		return false;
+	}
+	
+	public static boolean canBrowse() {
+		if (Desktop.isDesktopSupported()) {
+			if (Desktop.getDesktop().isSupported(Action.BROWSE)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

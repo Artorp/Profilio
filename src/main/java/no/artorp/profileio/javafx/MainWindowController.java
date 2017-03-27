@@ -1,8 +1,8 @@
 package no.artorp.profileio.javafx;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -206,13 +206,11 @@ public class MainWindowController implements WatcherListener {
 		});
 		
 		buttonBrowse.setOnAction(event->{
-			try {
-				File file = tableViewProfiles.getSelectionModel().getSelectedItem().getDirectory();
-				if (file.exists()) {
-					Desktop.getDesktop().browse(file.toURI());
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
+			File file = tableViewProfiles.getSelectionModel().getSelectedItem().getDirectory();
+			if (file.exists()) {
+				URI toBrowse = file.toURI();
+				System.out.println("Attempting to browse "+toBrowse);
+				FileIO.browse(toBrowse);
 			}
 		});
 		
