@@ -69,6 +69,7 @@ public class SettingsController {
 			ObservableList<Profile> mainTableViewData) {
 		this.settingsStage = settingsStage;
 		this.mainController = mainController;
+		this.settingsIO = settingsIO;
 		this.fileIO = fileIO;
 		this.myRegistry = myRegistry;
 		this.mainTableViewData = mainTableViewData;
@@ -204,7 +205,6 @@ public class SettingsController {
 				if (newValue.equals(radioJunction)
 						&& myRegistry.getMoveMethod().intValue() != FileIO.METHOD_JUNCTION ) {
 					myRegistry.setMoveMethod(FileIO.METHOD_JUNCTION);
-					settingsIO.saveRegistry(myRegistry); // Save
 					if (activeProfile != null) {
 						try {
 							fileIO.performProfileJunctionCreation(activeProfilePath, userDataPath);
@@ -232,6 +232,8 @@ public class SettingsController {
 				} else if (newValue.equals(radioRename)
 						&& myRegistry.getMoveMethod().intValue() != FileIO.METHOD_MOVE) {
 					myRegistry.setMoveMethod(FileIO.METHOD_MOVE);
+					System.out.println(myRegistry);
+					System.out.println(settingsIO);
 					settingsIO.saveRegistry(myRegistry); // Save
 					if (activeProfile != null) {
 						try {
