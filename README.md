@@ -1,2 +1,2 @@
-# FactorioProfileManager
-Profile and mod manager for Factorio
+# Profileio
+Profile manager for Factorio
