@@ -193,6 +193,8 @@ public class SettingsIO {
 		if (FileLocations.isWindows()) {
 			guesses.add(Paths.get("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Factorio"));
 			guesses.add(Paths.get("C:\\Program Files\\Factorio"));
+			guesses.add(Paths.get("D:\\Program Files (x86)\\Steam\\steamapps\\common\\Factorio"));
+			guesses.add(Paths.get("D:\\Program Files\\Factorio"));
 			
 			for (int i = 0; i < guesses.size(); i++) {
 				Path g = guesses.get(i);
@@ -212,6 +214,11 @@ public class SettingsIO {
 				guesses.set(i, g);
 			}
 		} else if (FileLocations.isLinuxUnix()) {
+			guesses.add(Paths.get(System.getProperty("user.home"),
+					".local/share/Steam/steamapps/common/Factorio"));
+			guesses.add(Paths.get(System.getProperty("user.home"),
+					".steam/steam/steamapps/common/Factorio"));
+			
 			guesses.add(Paths.get(System.getProperty("user.home"), ".factorio"));
 			
 			for (int i = 0; i < guesses.size(); i++) {
