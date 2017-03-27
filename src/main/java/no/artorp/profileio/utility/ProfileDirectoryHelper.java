@@ -20,6 +20,7 @@ public class ProfileDirectoryHelper {
 		List<Profile> profiles = new ArrayList<Profile>();
 		if (profileDirectory == null) {
 			// Return empty list if no profile path has been set
+			registry.getProfiles().clear();
 			return profiles;
 		}
 
@@ -37,7 +38,7 @@ public class ProfileDirectoryHelper {
 					registry.setActiveProfile(p);
 				}
 				
-				String factorioVersion = registry.findFactorioNameFromProfileName(f.getName());
+				String factorioVersion = registry.findGameName(f.getName());
 				if (factorioVersion == null) {
 					if (! registry.getFactorioInstallations().isEmpty()) {
 						// No defined factorio version for this profile? Assign the first one
@@ -50,6 +51,8 @@ public class ProfileDirectoryHelper {
 			}
 		}
 		
+		registry.getProfiles().clear();
+		registry.getProfiles().addAll(profiles);
 		return profiles;
 	}
 	

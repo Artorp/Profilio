@@ -6,7 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -33,7 +32,7 @@ public class Profile {
 	private Registry register;
 	private SettingsIO settingsIO;
 	
-	private FactorioInstallations myVersion;
+	private FactorioInstallation myVersion;
 	
 	public Profile(File directory, Registry myRegistry, boolean isActive, SettingsIO settingsIO) {
 		this.register = myRegistry;
@@ -45,23 +44,18 @@ public class Profile {
 		// Bind myVersion to path and whether it exists
 		this.factorioVersion.addListener((observable, oldValue, newValue) -> {
 			if (newValue != null) {
-				this.myVersion = myRegistry.findInstallationFromFactorioName(newValue);
+				this.myVersion = myRegistry.findInstallation(newValue);
 			} else {
 				this.myVersion = null;
 			}
 		});
 		
-		myRegistry.getFactorioInstallations().addListener((Observable observable) -> {
-			System.out.println("Profile: factorio installation invalidated");
-			if (myRegistry.findInstallationFromFactorioName(this.myVersion.getName()) == null) {
-				this.myVersion = null;
-			}
-		});
 		
 		// To determine factorioVersion: Look up registry against our name
-		String facVersion = myRegistry.findFactorioNameFromProfileName(
+		String facVersion = myRegistry.findGameName(
 				this.directory.getValue().getName()
 				);
+
 		this.factorioVersion.set(facVersion);
 		
 		this.isActive.setValue(isActive);
@@ -113,11 +107,15 @@ public class Profile {
 	
 	public boolean isDirectory() { return this.isDirectory; }
 	
-	public FactorioInstallations getFactorioInstallation() {
+	// ## Getters and setters below
+	
+	public FactorioInstallation getFactorioInstallation() {
 		return this.myVersion;
 	}
 	
-	// ## Getters and setters below
+	public void setFactorioInstallation(FactorioInstallation fi) {
+		this.myVersion = fi;
+	}
 	
 	public StringProperty customNameProperty() {
 		return customName;
@@ -128,11 +126,13 @@ public class Profile {
 	}
 	
 	/**
-	 * Private method, this property is bound to the file object property
+	 * This property is bound to the file object property, no setter needed
 	 */
-	private void setName(String name) {
+	/*
+	public void setName(String name) {
 		this.customName.setValue(name);
 	}
+	*/
 	
 	public StringProperty factorioVersionProperty() {
 		return factorioVersion;

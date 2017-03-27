@@ -8,13 +8,13 @@ import javafx.scene.control.TableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
-import no.artorp.profileio.javafx.FactorioInstallations;
+import no.artorp.profileio.javafx.FactorioInstallation;
 import no.artorp.profileio.javafx.Profile;
 import no.artorp.profileio.javafx.Registry;
 
 public class FacVersionNameCell extends TableCell<Profile, String> {
 	
-	private final ComboBox<FactorioInstallations> comboBox = new ComboBox<>();
+	private final ComboBox<FactorioInstallation> comboBox = new ComboBox<>();
 
 	public FacVersionNameCell(Registry registry) {
 		
@@ -29,11 +29,11 @@ public class FacVersionNameCell extends TableCell<Profile, String> {
 		comboBox.setMaxWidth(Double.MAX_VALUE);
 		
 		// Cell factory
-		Callback<ListView<FactorioInstallations>, ListCell<FactorioInstallations>> cbCellFactory
-		= (ListView<FactorioInstallations> param) -> {
-				return new ListCell<FactorioInstallations>(){
+		Callback<ListView<FactorioInstallation>, ListCell<FactorioInstallation>> cbCellFactory
+		= (ListView<FactorioInstallation> param) -> {
+				return new ListCell<FactorioInstallation>(){
 					@Override
-		            protected void updateItem(FactorioInstallations item, boolean empty) {
+		            protected void updateItem(FactorioInstallation item, boolean empty) {
 		                super.updateItem(item, empty);
 		                if (item == null || empty) {
 		                    setGraphic(null);
@@ -44,11 +44,11 @@ public class FacVersionNameCell extends TableCell<Profile, String> {
 				};
 		};
 		
-		comboBox.setButtonCell((ListCell<FactorioInstallations>) cbCellFactory.call(null));
+		comboBox.setButtonCell((ListCell<FactorioInstallation>) cbCellFactory.call(null));
 		comboBox.setCellFactory(cbCellFactory);
 		
 		// Populate combobox
-		ObservableList<FactorioInstallations> options = registry.getFactorioInstallations();
+		ObservableList<FactorioInstallation> options = registry.getFactorioInstallations();
 		comboBox.setItems(options);
 		
 		// Event handling
@@ -59,7 +59,7 @@ public class FacVersionNameCell extends TableCell<Profile, String> {
 		});
 		
 		// Check if our version still is in list, if not, change text to red
-		options.addListener((javafx.collections.ListChangeListener.Change<? extends FactorioInstallations> c)->{
+		options.addListener((javafx.collections.ListChangeListener.Change<? extends FactorioInstallation> c)->{
 			updateTextColor();
 		});
 	}
@@ -75,7 +75,7 @@ public class FacVersionNameCell extends TableCell<Profile, String> {
 	}
 	
 	private boolean versionNameInList() {
-		ObservableList<FactorioInstallations> installs = comboBox.getItems();
+		ObservableList<FactorioInstallation> installs = comboBox.getItems();
 		
 		Profile profile = (Profile) getTableRow().getItem();
 		
@@ -86,7 +86,7 @@ public class FacVersionNameCell extends TableCell<Profile, String> {
 			return false;
 		}
 		
-		for (FactorioInstallations fi : installs) {
+		for (FactorioInstallation fi : installs) {
 			if (profile.getFactorioVersion().equals(fi.getName())) {
 				return true;
 			}
@@ -118,7 +118,7 @@ public class FacVersionNameCell extends TableCell<Profile, String> {
 		Profile p = (Profile) getTableRow().getItem();
 		String facVersion = p.getFactorioVersion();
 		if (facVersion != null) {
-			for (FactorioInstallations f : comboBox.getItems()) {
+			for (FactorioInstallation f : comboBox.getItems()) {
 				if (facVersion.equals(f.getName())) {
 					comboBox.setValue(f);
 					break;

@@ -56,7 +56,7 @@ public class App extends Application {
 		this.settingsIO = settingsIO;
 		
 		// Setup scene, controller, stage
-		primaryStage.setTitle("Factorio Profile Manager");
+		primaryStage.setTitle("Profileio - Factorio Profile Manager");
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainWindow.fxml"));
 		MainWindowController controller = new MainWindowController(primaryStage, settingsIO, fileIO, myRegistry);

@@ -1,8 +1,8 @@
 package no.artorp.profileio.javafx;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -145,17 +145,20 @@ public class MainWindowController implements WatcherListener {
 		
 		// Can only start if active profile set and valid factorio version
 		this.myRegistry.activeProfileProperty().addListener((ob, o, n) -> {
-			boolean disabled = true;
-			if (n != null) {
-				FactorioInstallations fi = n.getFactorioInstallation();
-				if (fi != null) {
-					// If version is in list, enable button
-					disabled = ! myRegistry.getFactorioInstallations().contains(n.getFactorioInstallation());
-				}
-			}
-			buttonStartFactorio.setDisable(disabled);
+			this.evaluateLaunchButtonState();
 		});
 		
+		
+		this.myRegistry.getFactorioInstallations().addListener(
+				(javafx.collections.ListChangeListener.Change<? extends FactorioInstallation> c) -> {
+					evaluateLaunchButtonState();
+				}
+		);
+		
+		// Initialize game launch button state
+		if (myRegistry.getHasInitialized().booleanValue()) {
+			this.evaluateLaunchButtonState();
+		}
 		
 		
 		// Setup button actions
@@ -206,13 +209,11 @@ public class MainWindowController implements WatcherListener {
 		});
 		
 		buttonBrowse.setOnAction(event->{
-			try {
-				File file = tableViewProfiles.getSelectionModel().getSelectedItem().getDirectory();
-				if (file.exists()) {
-					Desktop.getDesktop().browse(file.toURI());
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
+			File file = tableViewProfiles.getSelectionModel().getSelectedItem().getDirectory();
+			if (file.exists()) {
+				URI toBrowse = file.toURI();
+				System.out.println("Attempting to browse "+toBrowse);
+				FileIO.browse(toBrowse);
 			}
 		});
 		
@@ -247,7 +248,7 @@ public class MainWindowController implements WatcherListener {
 			}
 			String factorioName = activeProfile.getFactorioVersion();
 			Path factorioPath = null;
-			for (FactorioInstallations fi : myRegistry.getFactorioInstallations()) {
+			for (FactorioInstallation fi : myRegistry.getFactorioInstallations()) {
 				if (fi.getName().equals(factorioName)) {
 					factorioPath = fi.getPath();
 				}
@@ -267,6 +268,20 @@ public class MainWindowController implements WatcherListener {
 				Platform.exit();
 			}
 		});
+	}
+	
+	public void evaluateLaunchButtonState() {
+		Profile p = myRegistry.getActiveProfile();
+		if (p != null) {
+			FactorioInstallation fi = p.getFactorioInstallation();
+			if (fi != null) {
+				if (myRegistry.getFactorioInstallations().contains(fi)) {
+					buttonStartFactorio.setDisable(false);
+					return;
+				}
+			}
+		}
+		buttonStartFactorio.setDisable(true);
 	}
 
 	
@@ -367,6 +382,7 @@ public class MainWindowController implements WatcherListener {
 		if (toDelete != null) {
 			tableData.remove(toDelete);
 			tableViewProfiles.sort();
+			myRegistry.getProfiles().remove(toDelete);
 		}
 	}
 
@@ -381,7 +397,7 @@ public class MainWindowController implements WatcherListener {
 	
 	private void fileCreatedHandle(Path fileCreated) {
 		if (checkIfIgnore(fileCreated)) return;
-		// All new profiles are assignes as inactive
+		// All new profiles are assigned as inactive
 		if (! fileCreated.toFile().isDirectory()) return;
 		Profile newProfile = new Profile(fileCreated.toFile(), myRegistry, false, settingsIO);
 		if (! myRegistry.getFactorioInstallations().isEmpty()) {
@@ -389,6 +405,7 @@ public class MainWindowController implements WatcherListener {
 		}
 		tableData.add(newProfile);
 		tableViewProfiles.sort();
+		myRegistry.getProfiles().add(newProfile);
 	}
 
 	@Override

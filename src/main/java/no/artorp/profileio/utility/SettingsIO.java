@@ -17,8 +17,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import no.artorp.profileio.javafx.ExceptionDialog;
-import no.artorp.profileio.javafx.FactorioInstallations;
+import no.artorp.profileio.javafx.FactorioInstallation;
 import no.artorp.profileio.javafx.KeyValuePair;
+import no.artorp.profileio.javafx.Profile;
 import no.artorp.profileio.javafx.Registry;
 import no.artorp.profileio.json_models.FactorioInstallationsJson;
 import no.artorp.profileio.json_models.FactorioVersionMapJson;
@@ -90,10 +91,10 @@ public class SettingsIO {
 		Boolean hasInitialized = new Boolean(settings.hasInitialized);
 		Path activeProfilePath = settings.activeProfilePath == null ? null : Paths.get(settings.activeProfilePath);
 		
-		ObservableList<FactorioInstallations> factorioInstallations = FXCollections.observableArrayList();
+		ObservableList<FactorioInstallation> factorioInstallations = FXCollections.observableArrayList();
 		List<FactorioInstallationsJson> installations = settings.factorioInstallations;
 		for (FactorioInstallationsJson element : installations) {
-			FactorioInstallations fi = new FactorioInstallations();
+			FactorioInstallation fi = new FactorioInstallation();
 			fi.setName(element.customName);
 			fi.setPath(Paths.get(element.path));
 			factorioInstallations.add(fi);
@@ -129,8 +130,14 @@ public class SettingsIO {
 		Boolean closeOnLaunch = myRegistry.getCloseOnLaunch();
 		Boolean hasInitialized = myRegistry.getHasInitialized();
 		Path activeProfilePath = myRegistry.getActiveProfilePath();
-		ObservableList<FactorioInstallations> factorioInstallations = myRegistry.getFactorioInstallations();
-		ObservableList<KeyValuePair<String, String>> profileToFactorioName = myRegistry.getProfileToFactorioName();
+		List<FactorioInstallation> factorioInstallations = myRegistry.getFactorioInstallations();
+		
+		// Generate new list of profile-to-game-name-pairs
+		List<KeyValuePair<String, String>> profileToFactorioName =
+				this.getProfileToInstallationMap(myRegistry.getProfiles());
+		
+		
+		
 		
 		// Generate Json object
 		SettingsJson settings = new SettingsJson();
@@ -143,7 +150,7 @@ public class SettingsIO {
 		settings.activeProfilePath = activeProfilePath == null ? null : activeProfilePath.toString();
 		
 		List<FactorioInstallationsJson> installations = new ArrayList<>();
-		for (FactorioInstallations fi : factorioInstallations) {
+		for (FactorioInstallation fi : factorioInstallations) {
 			FactorioInstallationsJson jsonObj = new FactorioInstallationsJson();
 			jsonObj.customName = fi.getName();
 			jsonObj.path = fi.getPath().toAbsolutePath().toString();
@@ -193,6 +200,8 @@ public class SettingsIO {
 		if (FileLocations.isWindows()) {
 			guesses.add(Paths.get("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Factorio"));
 			guesses.add(Paths.get("C:\\Program Files\\Factorio"));
+			guesses.add(Paths.get("D:\\Program Files (x86)\\Steam\\steamapps\\common\\Factorio"));
+			guesses.add(Paths.get("D:\\Program Files\\Factorio"));
 			
 			for (int i = 0; i < guesses.size(); i++) {
 				Path g = guesses.get(i);
@@ -212,6 +221,11 @@ public class SettingsIO {
 				guesses.set(i, g);
 			}
 		} else if (FileLocations.isLinuxUnix()) {
+			guesses.add(Paths.get(System.getProperty("user.home"),
+					".local/share/Steam/steamapps/common/Factorio"));
+			guesses.add(Paths.get(System.getProperty("user.home"),
+					".steam/steam/steamapps/common/Factorio"));
+			
 			guesses.add(Paths.get(System.getProperty("user.home"), ".factorio"));
 			
 			for (int i = 0; i < guesses.size(); i++) {
@@ -224,7 +238,7 @@ public class SettingsIO {
 		// Check if any of the path guesses exists
 		for (Path g : guesses) {
 			if (g.toFile().exists()) {
-				FactorioInstallations fi = new FactorioInstallations();
+				FactorioInstallation fi = new FactorioInstallation();
 				fi.setName("Factorio");
 				fi.setPath(g);
 				registry.getFactorioInstallations().add(fi);
@@ -248,6 +262,17 @@ public class SettingsIO {
 				}
 			}
 		}
+	}
+	
+	private List<KeyValuePair<String, String>> getProfileToInstallationMap(List<Profile> profiles) {
+		List<KeyValuePair<String, String>> list = new ArrayList<>();
+		for (Profile p : profiles) {
+			if (p.getFactorioVersion() != null) {
+				KeyValuePair<String, String> pair = new KeyValuePair<>(p.getName(), p.getFactorioVersion());
+				list.add(pair);
+			}
+		}
+		return list;
 	}
 
 }

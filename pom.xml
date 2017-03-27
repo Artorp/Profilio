@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>no.artorp</groupId>
 	<artifactId>profileio</artifactId>
-	<version>0.1.2</version>
+	<version>0.1.3-SNAPSHOT</version>
 	<name>Profileio</name>
 	<description>A Factorio profile manager</description>
 	<properties>
@@ -53,14 +53,13 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
+							<minimizeJar>true</minimizeJar>
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<mainClass>no.artorp.profileio.Main</mainClass>
 								</transformer>
 							</transformers>
-							<source>1.8</source>
-							<target>1.8</target>
 						</configuration>
 					</execution>
 				</executions>

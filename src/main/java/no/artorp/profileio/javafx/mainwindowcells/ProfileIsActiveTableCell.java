@@ -17,7 +17,6 @@ import no.artorp.profileio.utility.SettingsIO;
 public class ProfileIsActiveTableCell extends TableCell<Profile, Boolean> {
 	
 	private Registry registry;
-	private SettingsIO settingsIO;
 	
 	private final ToggleButton toggleRadioButton = new ToggleButton("Active"){
 		@Override public void fire() {
@@ -36,7 +35,6 @@ public class ProfileIsActiveTableCell extends TableCell<Profile, Boolean> {
 
 	public ProfileIsActiveTableCell(ToggleGroup tGroup, Registry registry, FileIO fileIO, SettingsIO settingsIO) {
 		this.registry = registry;
-		this.settingsIO = settingsIO;
 		toggleRadioButton.setToggleGroup(tGroup);
 		toggleRadioButton.setMaxWidth(Double.MAX_VALUE);
 		
