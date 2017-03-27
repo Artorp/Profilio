@@ -1,6 +1,5 @@
 package no.artorp.profileio.javafx;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -154,9 +153,10 @@ public class SettingsController {
 		
 		if (!FileLocations.isWindows()) {
 			radioJunction.setDisable(true);
-		}
-		if (!(new WindowsJunctionUtility()).testJunctionPermissions()) {
-			radioJunction.setDisable(true);
+		} else {
+			if (!(new WindowsJunctionUtility()).testJunctionPermissions()) {
+				radioJunction.setDisable(true);
+			}
 		}
 		if (! fileIO.testSymbolicLink()) {
 			radioSymlink.setDisable(true);

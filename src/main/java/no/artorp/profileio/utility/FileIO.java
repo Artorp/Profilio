@@ -11,6 +11,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import no.artorp.profileio.exceptions.FactorioProfileManagerException;
@@ -378,22 +379,23 @@ public class FileIO {
 	 * @param uri
 	 * @return {@code true} if succeeded, {@code false otherwise}
 	 */
-	public static boolean browse(URI uri) {
+	public static void browse(URI uri) {
 		if (! canBrowse()) {
-			Alert alert = new Alert(AlertType.INFORMATION,
-					"Browsing throught Desktop.getDesktop().browse(URI) not supported on this platform");
-			alert.showAndWait();
-			return false;
+			new Alert(AlertType.INFORMATION,
+					"Browsing throught Desktop.getDesktop().browse(URI) not supported on this platform")
+			.showAndWait();
+			return;
 		}
-		try {
-			Desktop.getDesktop().browse(uri);
-			return true;
-		} catch (IOException e) {
-			e.printStackTrace();
-			Alert alert = new ExceptionDialog(e, "Error when attempting to browse");
-			alert.showAndWait();
-		}
-		return false;
+		new Thread(() -> { // New thread to fix freeze on Linux
+			try {
+				Desktop.getDesktop().browse(uri);
+			} catch (IOException e) {
+				e.printStackTrace();
+				Platform.runLater(() ->
+				new ExceptionDialog(e, "Error when attempting to browse").showAndWait()
+				);
+			}
+		}).start();
 	}
 	
 	public static boolean canBrowse() {
