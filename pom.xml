@@ -53,14 +53,13 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
+							<minimizeJar>true</minimizeJar>
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<mainClass>no.artorp.profileio.Main</mainClass>
 								</transformer>
 							</transformers>
-							<source>1.8</source>
-							<target>1.8</target>
 						</configuration>
 					</execution>
 				</executions>
