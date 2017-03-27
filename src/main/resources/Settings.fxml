@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Paths">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </Label>
+            <GridPane hgap="10.0" vgap="10.0">
+              <columnConstraints>
+                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="130.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label minWidth="-Infinity" text="User data directory:">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin>
+                  </Label>
+                  <Label text="Profiles directory:" GridPane.rowIndex="1" />
+                  <TextField fx:id="textFieldUserData" editable="false" GridPane.columnIndex="1" />
+                  <TextField fx:id="textFieldProfilesDir" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Button fx:id="buttonBrowseUserData" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Browse..." GridPane.columnIndex="2" />
+                  <Button fx:id="buttonBrowseProfilesDir" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Browse..." GridPane.columnIndex="2" GridPane.rowIndex="1" />
+               </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </GridPane>
+            <Separator prefWidth="200.0">
+               <VBox.margin>
+                  <Insets bottom="5.0" top="5.0" />
+               </VBox.margin>
+            </Separator>
+            <Button fx:id="buttonFirstTimeInit" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Perform first-time save transfer">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </Button>
+            <Separator prefWidth="200.0">
+               <VBox.margin>
+                  <Insets bottom="5.0" top="5.0" />
+               </VBox.margin>
+            </Separator>
+            <HBox>
+               <children>
+                  <VBox HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Directory move method">
+                           <VBox.margin>
+                              <Insets bottom="10.0" left="10.0" right="10.0" />
+                           </VBox.margin>
+                        </Label>
+                        <VBox VBox.vgrow="ALWAYS">
+                           <children>
+                              <RadioButton fx:id="radioJunction" mnemonicParsing="false" text="NTFS Junction (recommended)">
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" />
+                                 </VBox.margin>
+                              </RadioButton>
+                              <RadioButton fx:id="radioSymlink" mnemonicParsing="false" text="Symbolic Link (recommended)">
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" />
+                                 </VBox.margin>
+                              </RadioButton>
+                              <RadioButton fx:id="radioRename" mnemonicParsing="false" text="Rename directory">
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" />
+                                 </VBox.margin>
+                              </RadioButton>
+                              <AnchorPane VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <Button fx:id="buttonMoreInfo" mnemonicParsing="false" text="More information" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </VBox>
+                     </children>
+                     <HBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </HBox.margin>
+                  </VBox>
+                  <Separator orientation="VERTICAL" prefHeight="200.0" />
+                  <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="General settings">
+                           <VBox.margin>
+                              <Insets bottom="10.0" left="10.0" right="10.0" />
+                           </VBox.margin>
+                        </Label>
+                        <CheckBox fx:id="checkBoxClose" mnemonicParsing="false" text="Close on game launch" />
+                     </children>
+                     <HBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </HBox.margin>
+                  </VBox>
+               </children>
+            </HBox>
+            <Separator prefWidth="200.0">
+               <VBox.margin>
+                  <Insets bottom="5.0" top="5.0" />
+               </VBox.margin>
+            </Separator>
+            <Label text="Factorio installations:">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </Label>
+            <HBox>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="10.0" right="5.0" top="5.0" />
+               </VBox.margin>
+               <children>
+                  <TableView fx:id="tableViewInstallations" editable="true" prefHeight="200.0" prefWidth="420.0" HBox.hgrow="ALWAYS">
+                    <columns>
+                      <TableColumn fx:id="columnName" maxWidth="1800.0" prefWidth="75.0" text="Name" />
+                      <TableColumn fx:id="columnDir" editable="false" prefWidth="75.0" text="Directory" />
+                    </columns>
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </TableView>
+                  <VBox maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="140.0" HBox.hgrow="NEVER">
+                     <children>
+                        <Button fx:id="buttonNewEntry" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Add new entry">
+                           <VBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </VBox.margin>
+                        </Button>
+                        <Button fx:id="buttonRemoveEntry" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Remove entry">
+                           <VBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" />
+                           </VBox.margin>
+                        </Button>
+                        <Button fx:id="buttonBrowse" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Open folder">
+                           <VBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" />
+                           </VBox.margin>
+                        </Button>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <Separator prefWidth="200.0" />
+         </children>
+      </VBox>
+   </center>
+   <bottom>
+      <AnchorPane BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="buttonClose" mnemonicParsing="false" text="Close" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+         </children>
+      </AnchorPane>
+   </bottom>
+</BorderPane>
