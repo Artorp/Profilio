@@ -8,7 +8,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import no.artorp.profileio.javafx.MainWindowController;
 import no.artorp.profileio.javafx.Registry;
-import no.artorp.profileio.json_models.SettingsJson;
 import no.artorp.profileio.utility.FileIO;
 import no.artorp.profileio.utility.FileLocations;
 import no.artorp.profileio.utility.Globals;
@@ -16,17 +15,23 @@ import no.artorp.profileio.utility.SettingsIO;
 
 public class App extends Application {
 	
-	private Stage primaryStage;
 	private SettingsIO settingsIO;
 	private Registry myRegistry;
 
-	public static void main(String[] args) {
+	/**
+	 * Do not use this <em>directly</em> as program main entry point,
+	 * <br>
+	 * see {@link Main#main(String[])}
+	 * 
+	 * @param args
+	 * @see Main#main(String[])
+	 */
+	public static void main_proxy(String[] args) {
 		launch(args);
 	}
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		this.primaryStage = primaryStage;
 
 		primaryStage.getIcons().add(new Image( getClass().getResourceAsStream("/icon_32.png")));
 		primaryStage.getIcons().add(new Image( getClass().getResourceAsStream("/icon_64.png")));
