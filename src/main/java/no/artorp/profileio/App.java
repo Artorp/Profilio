@@ -33,9 +33,10 @@ public class App extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
+		primaryStage.getIcons().add(new Image( getClass().getResourceAsStream("/icon_16.png")));
 		primaryStage.getIcons().add(new Image( getClass().getResourceAsStream("/icon_32.png")));
-		primaryStage.getIcons().add(new Image( getClass().getResourceAsStream("/icon_64.png")));
-		primaryStage.getIcons().add(new Image( getClass().getResourceAsStream("/icon_128.png")));
+		primaryStage.getIcons().add(new Image( getClass().getResourceAsStream("/icon_48.png")));
+		primaryStage.getIcons().add(new Image( getClass().getResourceAsStream("/icon_256.png")));
 		
 		Registry myRegistry = new Registry();
 		this.myRegistry = myRegistry;
