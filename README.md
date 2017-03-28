@@ -1,4 +1,4 @@
-# Profileio
+# Profilio
 Profile manager for Factorio
 
 ## Linux
