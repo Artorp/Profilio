@@ -8,6 +8,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import no.artorp.profilio.javafx.MainWindowController;
 import no.artorp.profilio.javafx.Registry;
+import no.artorp.profilio.logging.MyLogger;
 import no.artorp.profilio.utility.FileIO;
 import no.artorp.profilio.utility.FileLocations;
 import no.artorp.profilio.utility.Globals;
@@ -27,6 +28,8 @@ public class App extends Application {
 	 * @see Main#main(String[])
 	 */
 	public static void main_proxy(String[] args) {
+		MyLogger.setup();
+		
 		launch(args);
 	}
 

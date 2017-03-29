@@ -10,7 +10,10 @@ public class FileLocations {
 	
 	public final static String DIR_CONFIG_NAME = "factorio_profilio";
 	public final static String DIR_PROFILE_NAME = "fpm";
-	private static String OS = System.getProperty("os.name").toUpperCase();
+	public final static String LOG_NAME_CURRENT = "profilio-current.txt";
+	public final static String LOG_NAME_PREVIOUS = "profilio-previous.txt";
+	
+	private final static String OS = System.getProperty("os.name").toUpperCase();
 	
 	public static boolean isWindows() {
 		return (OS.indexOf("WIN") >= 0);
