@@ -42,6 +42,8 @@ public class App extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		
+		Thread.currentThread().setName("javafx");
 
 		primaryStage.getIcons().add(new Image( getClass().getResourceAsStream("/icon_16.png")));
 		primaryStage.getIcons().add(new Image( getClass().getResourceAsStream("/icon_32.png")));
