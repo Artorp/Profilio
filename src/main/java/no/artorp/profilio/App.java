@@ -35,8 +35,7 @@ public class App extends Application {
 	 */
 	public static void main_proxy(String[] args) {
 		MyLogger.setup();
-		LOGGER.log(Level.INFO, "Java version: " + System.getProperty("java.version")
-			+ ", Operating system: "+System.getProperty("os.name"));
+		
 		launch(args);
 	}
 
@@ -44,6 +43,13 @@ public class App extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		
 		Thread.currentThread().setName("javafx");
+
+		LOGGER.log(Level.INFO, String.format("%s (%s, javafx: %s), OS: %s (%s)",
+				System.getProperty("java.runtime.name"),
+				System.getProperty("java.version"),
+				System.getProperty("javafx.version"),
+				System.getProperty("os.name"),
+				System.getProperty("os.arch")));
 
 		primaryStage.getIcons().add(new Image( getClass().getResourceAsStream("/icon_16.png")));
 		primaryStage.getIcons().add(new Image( getClass().getResourceAsStream("/icon_32.png")));
