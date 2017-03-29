@@ -43,7 +43,7 @@ public class App extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		
 		Thread.currentThread().setName("javafx");
-
+		
 		LOGGER.log(Level.INFO, String.format("%s (%s, javafx: %s), OS: %s (%s)",
 				System.getProperty("java.runtime.name"),
 				System.getProperty("java.version"),
