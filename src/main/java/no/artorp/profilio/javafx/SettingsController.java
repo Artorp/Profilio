@@ -2,10 +2,13 @@ package no.artorp.profilio.javafx;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.beans.Observable;
 import javafx.collections.ObservableList;
@@ -26,6 +29,8 @@ import no.artorp.profilio.utility.SettingsIO;
 import no.artorp.profilio.utility.WindowsJunctionUtility;
 
 public class SettingsController {
+	
+	public static final Logger LOGGER = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
 	
 	private Stage settingsStage;
 	private MainWindowController mainController;
@@ -96,6 +101,7 @@ public class SettingsController {
 		textFieldProfilesDir.textProperty().bind(
 				myRegistry.factorioProfilesPathProperty().asString()
 				);
+		
 		buttonBrowseProfilesDir.setOnAction(event->{
 			File initDir = myRegistry.factorioProfilesPathProperty().getValue().toFile();
 			if (initDir.exists()) {
@@ -113,7 +119,7 @@ public class SettingsController {
 									myRegistry.getFactorioDataPath(),
 									myRegistry.getActiveProfilePath());
 						} catch (IOException e) {
-							e.printStackTrace();
+							LOGGER.log(Level.SEVERE, "Error revert move before changing profile directory", e);
 						}
 					}
 				}
@@ -126,7 +132,7 @@ public class SettingsController {
 								myRegistry.getFactorioDataPath(),
 								myRegistry.getActiveProfilePath());
 					} catch (IOException e) {
-						e.printStackTrace();
+						LOGGER.log(Level.SEVERE, "Error moving active profile to new location", e);
 					}
 					this.mainController.refreshProfiles();
 				}
@@ -154,13 +160,16 @@ public class SettingsController {
 		radioRename.setToggleGroup(moveMethod);
 		
 		if (!FileLocations.isWindows()) {
+			LOGGER.info("Junctions only available on Windows, disabling junction feature");
 			radioJunction.setDisable(true);
 		} else {
 			if (!(new WindowsJunctionUtility()).testJunctionPermissions()) {
+				LOGGER.warning("Runtime do not have permission to create junctions, disabling junctions");
 				radioJunction.setDisable(true);
 			}
 		}
 		if (! fileIO.testSymbolicLink()) {
+			LOGGER.warning("Symbolic links not supported, disabling feature");
 			radioSymlink.setDisable(true);
 		}
 		
@@ -176,7 +185,7 @@ public class SettingsController {
 					try {
 						fileIO.revertProfileJunctions(userDataPath);
 					} catch (IOException e) {
-						e.printStackTrace();
+						LOGGER.log(Level.SEVERE, "Error deleting junction links", e);
 						Alert alert = new ExceptionDialog(e);
 						alert.showAndWait();
 						return;
@@ -185,7 +194,7 @@ public class SettingsController {
 					try {
 						fileIO.revertProfileSymlinks(userDataPath);
 					} catch (IOException e) {
-						e.printStackTrace();
+						LOGGER.log(Level.SEVERE, "Error deleting symlinks", e);
 						Alert alert = new ExceptionDialog(e);
 						alert.showAndWait();
 						return;
@@ -194,7 +203,7 @@ public class SettingsController {
 					try {
 						fileIO.revertProfileMove(userDataPath, activeProfilePath);
 					} catch (IOException e) {
-						e.printStackTrace();
+						LOGGER.log(Level.SEVERE, "Error moving active profile folders", e);
 						Alert alert = new ExceptionDialog(e);
 						alert.showAndWait();
 						return;
@@ -210,7 +219,7 @@ public class SettingsController {
 						try {
 							fileIO.performProfileJunctionCreation(activeProfilePath, userDataPath);
 						} catch (IOException e) {
-							e.printStackTrace();
+							LOGGER.log(Level.SEVERE, "Error creating junctions", e);
 							Alert alert = new ExceptionDialog(e);
 							alert.showAndWait();
 							return;
@@ -224,7 +233,7 @@ public class SettingsController {
 						try {
 							fileIO.performProfileSymlinks(activeProfilePath, userDataPath);
 						} catch (IOException e) {
-							e.printStackTrace();
+							LOGGER.log(Level.SEVERE, "Error creating symlinks", e);
 							Alert alert = new ExceptionDialog(e);
 							alert.showAndWait();
 							return;
@@ -233,14 +242,12 @@ public class SettingsController {
 				} else if (newValue.equals(radioRename)
 						&& myRegistry.getMoveMethod().intValue() != FileIO.METHOD_MOVE) {
 					myRegistry.setMoveMethod(FileIO.METHOD_MOVE);
-					System.out.println(myRegistry);
-					System.out.println(settingsIO);
 					settingsIO.saveRegistry(myRegistry); // Save
 					if (activeProfile != null) {
 						try {
 							fileIO.performProfileMove(activeProfilePath, userDataPath);
 						} catch (IOException e) {
-							e.printStackTrace();
+							LOGGER.log(Level.SEVERE, "Error moving profile folders", e);
 							Alert alert = new ExceptionDialog(e);
 							alert.showAndWait();
 							return;
@@ -374,7 +381,7 @@ public class SettingsController {
 			FactorioInstallation fi = tableViewInstallations.getSelectionModel().getSelectedItem();
 			if (fi != null) {
 				URI toBrowse = fi.getPath().getParent().toUri();
-				System.out.println("Attempting to browse "+toBrowse);
+				LOGGER.info("Attempting to browse "+toBrowse);
 				FileIO.browse(toBrowse);
 			}
 		});
@@ -418,7 +425,7 @@ public class SettingsController {
 			Optional<ButtonType> result = alert.showAndWait();
 			if (result.get() == browseDir) {
 				URI toBrowse = myRegistry.getFactorioDataPath().toUri();
-				System.out.println("Attempting to browse "+toBrowse);
+				LOGGER.info("Attempting to browse "+toBrowse);
 				FileIO.browse(toBrowse);
 			}
 			
@@ -442,10 +449,10 @@ public class SettingsController {
 		try {
 			operations = fileIO.getInitialSetupReadable(myRegistry);
 		} catch (FactorioProfileManagerException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, "Caught exception when peeking", e);
 			return false;
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, "Caught exception when peeking", e);
 			return false;
 		}
 		
@@ -483,10 +490,10 @@ public class SettingsController {
 		try {
 			fileIO.performInitialSetup(myRegistry);
 		} catch (FactorioProfileManagerException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, "Caught exception during initial setup", e);
 			return false;
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, "Caught exception during initial setup", e);
 			return false;
 		}
 		

@@ -48,7 +48,4 @@ public class ExceptionDialog extends Alert {
 		this.getDialogPane().setExpandableContent(expContent);
 	}
 
-
-	
-
 }

@@ -2,6 +2,7 @@ package no.artorp.profilio.javafx;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -9,6 +10,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.application.Platform;
 import javafx.beans.Observable;
@@ -44,6 +47,8 @@ import no.artorp.profilio.utility.SettingsIO;
 import no.artorp.profilio.utility.WatcherListener;
 
 public class MainWindowController implements WatcherListener {
+	
+	public static final Logger LOGGER = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
 
 	private final Stage primaryStage;
 	private Stage settingsStage;
@@ -93,7 +98,7 @@ public class MainWindowController implements WatcherListener {
 					fileIO.createProfilesDir(myRegistry);
 					openSettingsWindow();
 				} catch (IOException e) {
-					e.printStackTrace();
+					LOGGER.log(Level.SEVERE, "Error when initializing register", e);
 				}
 			});
 		} else {
@@ -101,7 +106,7 @@ public class MainWindowController implements WatcherListener {
 				settings = settingsIO.loadSettings();
 				settingsIO.putIntoRegistry(settings, myRegistry);
 			} catch (IOException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, "Error loading settings", e);
 			}
 		}
 		
@@ -212,7 +217,7 @@ public class MainWindowController implements WatcherListener {
 			File file = tableViewProfiles.getSelectionModel().getSelectedItem().getDirectory();
 			if (file.exists()) {
 				URI toBrowse = file.toURI();
-				System.out.println("Attempting to browse "+toBrowse);
+				LOGGER.info("Attempting to browse "+toBrowse);
 				FileIO.browse(toBrowse);
 			}
 		});
@@ -235,7 +240,7 @@ public class MainWindowController implements WatcherListener {
 			try {
 				openSettingsWindow();
 			} catch (IOException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, "Error opening settings", e);
 			}
 		});
 		
@@ -243,7 +248,7 @@ public class MainWindowController implements WatcherListener {
 			List<String> commands = new ArrayList<>();
 			Profile activeProfile = myRegistry.getActiveProfile();
 			if (activeProfile == null) {
-				System.err.println("No active profile found.");
+				LOGGER.severe("No active profile found.");
 				return;
 			}
 			String factorioName = activeProfile.getFactorioVersion();
@@ -254,7 +259,7 @@ public class MainWindowController implements WatcherListener {
 				}
 			}
 			if (factorioPath == null) {
-				System.err.println("No factorio installations found.");
+				LOGGER.severe("No factorio installations found.");
 				return;
 			}
 			commands.add(factorioPath.toAbsolutePath().toString());
@@ -262,7 +267,7 @@ public class MainWindowController implements WatcherListener {
 			try {
 				pBuilder.start();
 			} catch (IOException e1) {
-				e1.printStackTrace();
+				LOGGER.log(Level.SEVERE, "Error launching game", e1);
 			}
 			if (myRegistry.getCloseOnLaunch().booleanValue()) {
 				Platform.exit();
@@ -355,9 +360,9 @@ public class MainWindowController implements WatcherListener {
 				try {
 					fileIO.revertProfileSymlinks(myRegistry.getFactorioDataPath());
 				} catch (IOException e) {
+					LOGGER.log(Level.SEVERE, "Error deleting links", e);
 					Alert alert = new ExceptionDialog(e);
 					alert.showAndWait();
-					e.printStackTrace();
 				}
 			} else if (myRegistry.getMoveMethod() == FileIO.METHOD_MOVE ) {
 				// Maybe user renamed file within an explorer?
@@ -456,7 +461,7 @@ public class MainWindowController implements WatcherListener {
 			Globals.THREADS.add(watcherThread);
 		} catch (IOException e) {
 			Alert alert = new ExceptionDialog(e);
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, "Exception setting up watcher", e);
 			alert.showAndWait();
 		}
 		

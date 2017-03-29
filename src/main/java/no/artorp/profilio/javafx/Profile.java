@@ -2,10 +2,13 @@ package no.artorp.profilio.javafx;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.Logger;
+
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -22,6 +25,8 @@ import no.artorp.profilio.utility.SettingsIO;
  * This directory contains two folders, "saves" and "mods"
  */
 public class Profile {
+	
+	public static final Logger LOGGER = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
 
 	private StringProperty customName = new SimpleStringProperty();
 	private StringProperty factorioVersion = new SimpleStringProperty();
@@ -80,7 +85,7 @@ public class Profile {
 		File ourFile = this.getDirectory();
 		Path newFilePath = Paths.get(newFileName);
 		newFilePath = ourFile.toPath().getParent().resolve(newFilePath);
-		System.out.println("Rename to: "+newFilePath);
+		LOGGER.info("Profile directory rename to\n"+newFilePath);
 		if (newFilePath.toFile().exists()) {
 			throw new FactorioProfileManagerException("Invalid name. New file already exists!\n"+newFilePath);
 		}

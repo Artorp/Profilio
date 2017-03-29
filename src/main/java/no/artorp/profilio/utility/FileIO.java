@@ -5,11 +5,14 @@ import java.awt.Desktop.Action;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -19,6 +22,8 @@ import no.artorp.profilio.javafx.ExceptionDialog;
 import no.artorp.profilio.javafx.Registry;
 
 public class FileIO {
+	
+	public static final Logger LOGGER = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
 	
 	public static final int METHOD_MOVE = 1;
 	public static final int METHOD_JUNCTION = 2;
@@ -177,7 +182,7 @@ public class FileIO {
 			try {
 				Files.deleteIfExists(link);
 			} catch (IOException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, "Exception when deleting " + link, e);
 				return false;
 			}
 		}
@@ -194,7 +199,7 @@ public class FileIO {
 				Files.deleteIfExists(target);
 				Files.deleteIfExists(link);
 			} catch (IOException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, "Error deleting test links:\n" + target + "\n" + link, e);
 				return false;
 			}
 			return true;
@@ -204,7 +209,7 @@ public class FileIO {
 			Files.deleteIfExists(target);
 			Files.deleteIfExists(link);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, "Error deleting test links:\n" + target + "\n" + link, e);
 		}
 		
 		return false;
@@ -224,8 +229,7 @@ public class FileIO {
 		try {
 			isLink = (p.compareTo(p.toRealPath()) != 0);
 		} catch (IOException e) {
-			System.err.println("An error occurred while checking if file is junction.");
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, "An error occurred while checking if file is junction.", e);
 		}
 		return isLink;
 	}
@@ -332,6 +336,7 @@ public class FileIO {
 			dataSaves.toRealPath();
 		} catch (IOException e) {
 			// Can't resolve, might be pointing at nothing, try to delete
+			LOGGER.warning("mods and saves links can not be resolved:\n" + dataMods + "\n" + dataSaves);
 			Files.deleteIfExists(dataMods);
 			Files.deleteIfExists(dataSaves);
 			return;
@@ -390,7 +395,7 @@ public class FileIO {
 			try {
 				Desktop.getDesktop().browse(uri);
 			} catch (IOException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, "Error when attempting to browse", e);
 				Platform.runLater(() ->
 				new ExceptionDialog(e, "Error when attempting to browse").showAndWait()
 				);

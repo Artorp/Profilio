@@ -1,6 +1,7 @@
 package no.artorp.profilio.utility;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -16,9 +17,13 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class DirectoryWatcher implements Runnable {
+	
+	public static final Logger LOGGER = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
 
 	private final WatchService watcher;
 	private final Map<WatchKey, Path> keys;
@@ -35,10 +40,12 @@ public class DirectoryWatcher implements Runnable {
 		this.keys = new HashMap<WatchKey, Path>();
 		this.recursive = recursive;
 		
+		LOGGER.setLevel(Level.FINE); // TODO: Remove verbose logging
+		
 		if (recursive) {
-			System.out.printf("Scanning %s ...\n", dir);
+			LOGGER.info(String.format("Scanning %s ...", dir));
 			registerAll(dir);
-			System.out.println("Done!");
+			LOGGER.info(String.format("Done scanning %s", dir));
 		} else {
 			register(dir);
 		}
@@ -60,10 +67,10 @@ public class DirectoryWatcher implements Runnable {
 		if (trace) {
 			Path prev = keys.get(key);
 			if (prev == null) {
-				System.out.printf("register %s\n", dir);
+				LOGGER.info(String.format("register %s", dir));
 			} else {
 				if (!dir.equals(prev)) {
-					System.out.printf("update %s -> %s\n", prev, dir);
+					LOGGER.info(String.format("update %s -> %s", prev, dir));
 				}
 			}
 		}
@@ -85,9 +92,9 @@ public class DirectoryWatcher implements Runnable {
 	
 	@Override
 	public void run() {
-		System.out.println("Watcher watching " + this.watchingDir);
+		LOGGER.info("Watcher watching " + this.watchingDir);
 		processEvents();
-		System.out.println("Watcher done watching " + this.watchingDir);
+		LOGGER.info("Watcher done watching " + this.watchingDir);
 	}
 	
 	/**
@@ -100,14 +107,14 @@ public class DirectoryWatcher implements Runnable {
 			try {
 				key = watcher.take();
 			} catch (InterruptedException e) {
-				System.out.println("Watcher interrupted, exiting...");
+				LOGGER.info("Watcher interrupted, exiting...");
 				//e.printStackTrace();
 				break;
 			}
 			
 			Path dir = keys.get(key);
 			if (dir == null) {
-				System.err.println("Watchkey not recognized!");
+				LOGGER.warning("Watchkey not recognized!");
 				continue;
 			}
 			
@@ -123,7 +130,7 @@ public class DirectoryWatcher implements Runnable {
 				Path child = dir.resolve(name);
 				
 				// Print out event
-				System.out.printf("%s: %s\n", event.kind().name(), child);
+				LOGGER.fine(String.format("%s: %s", event.kind().name(), child));
 				
 				
 				// If directory is created and watching recursively,
@@ -134,7 +141,7 @@ public class DirectoryWatcher implements Runnable {
 							register(child);
 						}
 					} catch (IOException e) {
-						e.printStackTrace();
+						LOGGER.log(Level.SEVERE, "Error registering dir "+child, e);
 					}
 				}
 				

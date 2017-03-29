@@ -10,8 +10,8 @@ public class MyConsoleFormatter extends Formatter {
 	@Override
 	public String format(LogRecord record) {
 		
-		String line = String.format("%12s %9s %s\n",
-				"["+Thread.currentThread().getName()+"]",
+		String line = String.format("%9s %s\n",
+				//"["+Thread.currentThread().getName()+"]", // too verbose
 				"["+record.getLevel()+"]",
 				formatMessage(record)
 				);

@@ -1,7 +1,10 @@
 package no.artorp.profilio.javafx.mainwindowcells;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.file.Path;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableCell;
@@ -15,6 +18,8 @@ import no.artorp.profilio.utility.FileIO;
 import no.artorp.profilio.utility.SettingsIO;
 
 public class ProfileIsActiveTableCell extends TableCell<Profile, Boolean> {
+	
+	public static final Logger LOGGER = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
 	
 	private Registry registry;
 	
@@ -41,14 +46,14 @@ public class ProfileIsActiveTableCell extends TableCell<Profile, Boolean> {
 		toggleRadioButton.selectedProperty().addListener((observable, oldVal, newVal)->{
 			Profile p = (Profile) getTableRow().getItem();
 			if (p != null && newVal != null && newVal.booleanValue()) {
-				System.out.println("Toggle radio button was changed");
+				LOGGER.info("Toggle radio button was changed");
 				Profile previousActive = registry.getActiveProfile();
 				Path userDataPath = registry.getFactorioDataPath();
 				
 				try {
 					fileIO.revertMoveGeneral(registry.getMoveMethod(), userDataPath, previousActive.getDirectory().toPath());
 				} catch (IOException e) {
-					e.printStackTrace();
+					LOGGER.log(Level.SEVERE, "Exception when reverting move", e);
 					Alert alert = new ExceptionDialog(e);
 					alert.showAndWait();
 				}
@@ -56,7 +61,7 @@ public class ProfileIsActiveTableCell extends TableCell<Profile, Boolean> {
 				try {
 					fileIO.performMoveGeneral(registry.getMoveMethod(), userDataPath, p.getDirectory().toPath());
 				} catch (IOException e) {
-					e.printStackTrace();
+					LOGGER.log(Level.SEVERE, "Exception when moving", e);
 					Alert alert = new ExceptionDialog(e);
 					alert.showAndWait();
 					return;
@@ -78,10 +83,6 @@ public class ProfileIsActiveTableCell extends TableCell<Profile, Boolean> {
 			setGraphic(null);
 			setText(null);
 		} else {
-			/*
-			Profile p = (Profile) getTableRow().getItem();
-			System.out.println("profile is null: "+p);
-			*/
 			toggleRadioButton.setSelected(item);
 			setGraphic(toggleRadioButton);
 			setText(null);

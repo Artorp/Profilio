@@ -1,6 +1,7 @@
 package no.artorp.profilio.utility;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,6 +9,8 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *  Standard usage:
@@ -15,6 +18,8 @@ import java.nio.file.attribute.BasicFileAttributes;
  *  {@code Files.walkFileTree(sourcePath, new CopyFileVisitor(targetPath));}
  */
 public class CopyFileVisitor extends SimpleFileVisitor<Path> {
+	
+	public static final Logger LOGGER = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
 	
 	private final Path targetPath;
 	private Path sourcePath = null;
@@ -35,7 +40,8 @@ public class CopyFileVisitor extends SimpleFileVisitor<Path> {
 
 	@Override
 	public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-		System.out.println("Copying:\n"+file + "\n to \n"+targetPath.resolve(sourcePath.relativize(file)));
+		Path target = targetPath.resolve(sourcePath.relativize(file));
+		LOGGER.fine(String.format("Copying\n%s\n to \n%s", file, target));
 		Files.copy(file, targetPath.resolve(sourcePath.relativize(file)), StandardCopyOption.COPY_ATTRIBUTES);
 		return FileVisitResult.CONTINUE;
 	}
@@ -52,7 +58,7 @@ public class CopyFileVisitor extends SimpleFileVisitor<Path> {
 		try {
 			Files.walkFileTree(sourceDir, new CopyFileVisitor(targetDir));
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, "Error walking file tree", e);
 		}
 	}
 	

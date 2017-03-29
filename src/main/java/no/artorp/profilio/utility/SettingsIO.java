@@ -4,12 +4,16 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -29,6 +33,8 @@ import no.artorp.profilio.json_models.SettingsJson;
  * Handles loading and saving of settings
  */
 public class SettingsIO {
+	
+	public static final Logger LOGGER = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
 	
 	public static final String FOLDER_NAME_MODS = "mods";
 	public static final String FOLDER_NAME_SAVES = "saves";
@@ -59,8 +65,9 @@ public class SettingsIO {
 			SettingsJson s = settingsFromRegistry(r);
 			saveSettings(s);
 		} catch (IOException e) {
-			e.printStackTrace();
-			Alert alert = new ExceptionDialog(e, "There was an error while saving settings.json");
+			String errorMsg = "There was an error while saving settings.json";
+			LOGGER.log(Level.SEVERE, errorMsg, e);
+			Alert alert = new ExceptionDialog(e, errorMsg);
 			alert.showAndWait();
 		}
 	}
@@ -135,8 +142,6 @@ public class SettingsIO {
 		// Generate new list of profile-to-game-name-pairs
 		List<KeyValuePair<String, String>> profileToFactorioName =
 				this.getProfileToInstallationMap(myRegistry.getProfiles());
-		
-		
 		
 		
 		// Generate Json object
@@ -242,7 +247,7 @@ public class SettingsIO {
 				fi.setName("Factorio");
 				fi.setPath(g);
 				registry.getFactorioInstallations().add(fi);
-				System.out.println("Installation found!\n"+g);
+				LOGGER.info("Installation found!\n" + g);
 				break;
 			}
 		}

@@ -1,6 +1,7 @@
 package no.artorp.profilio.utility;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -10,8 +11,12 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class WindowsJunctionUtility {
+	
+	public static final Logger LOGGER = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
 	
     public static final String D_LINK = "/D";
     public static final String H_LINK = "/H";
@@ -52,7 +57,7 @@ public class WindowsJunctionUtility {
 	 */
 	public boolean createLink(String flag, Path link, Path target) throws IOException {
 		if (! this.commands.contains(flag)) {
-			System.err.printf("%s is not a valid command\n", flag);
+			LOGGER.warning(String.format("%s is not a valid command", flag));
 			return false;
 		}
 		
@@ -92,12 +97,13 @@ public class WindowsJunctionUtility {
 		int exitVal = -1;
 		
 		try {
-			ProcessBuilder pb = new ProcessBuilder("cmd", "/C", this.command, this.flag, this.link.toString(), this.target.toString());
+			ProcessBuilder pb = new ProcessBuilder("cmd", "/C", this.command, this.flag,
+					this.link.toString(), this.target.toString());
 			//pb.redirectErrorStream(true);
 			process = pb.start();
 			exitVal = process.waitFor();
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, "There was an exception when starting CMD", e);
 		}
 		
 		return exitVal;
@@ -131,7 +137,7 @@ public class WindowsJunctionUtility {
 				return false;
 			}
 		} catch (IOException | InterruptedException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, "There was an exception when creating junction link", e);
 			return false;
 		}
 		
@@ -143,7 +149,7 @@ public class WindowsJunctionUtility {
 					String[] cmd_2 = {"CMD", "/C", "rmdir", fromDir.toString()};
 					Runtime.getRuntime().exec(cmd_2);
 				} catch (IOException e) {
-					e.printStackTrace();
+					LOGGER.log(Level.SEVERE, "There was an exception when removing junction link", e);
 				}
 				return true;
 			}

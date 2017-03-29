@@ -1,9 +1,11 @@
 package no.artorp.profilio.javafx;
 
+import java.lang.invoke.MethodHandles;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -21,6 +23,8 @@ import javafx.util.StringConverter;
  * Holds data commonly loaded and saved
  */
 public class Registry {
+	
+	public static final Logger LOGGER = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
 	
 	private ObjectProperty<Path> configPath = new SimpleObjectProperty<Path>();
 	private ObjectProperty<Path> factorioDataPath = new SimpleObjectProperty<Path>();
@@ -52,12 +56,11 @@ public class Registry {
 	 */
 	public void setupPathProfileBindings(ObservableList<Profile> profiles) {
 		
-		// TODO: REMOVE DEBUG PRINTERS:
 		this.activeProfile.addListener((observable, o, n)->{
-			System.out.println("active profile was changed: "+n.getName());
+			LOGGER.info("active profile was changed: "+n.getName());
 		});
 		this.activeProfilePath.addListener((observable, o, n)->{
-			System.out.println("active path was changed: "+n.getFileName());
+			LOGGER.info("active path was changed: "+n.getFileName());
 		});
 		
 		

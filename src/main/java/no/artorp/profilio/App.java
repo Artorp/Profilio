@@ -1,5 +1,9 @@
 package no.artorp.profilio;
 import java.io.File;
+import java.lang.invoke.MethodHandles;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -16,6 +20,8 @@ import no.artorp.profilio.utility.SettingsIO;
 
 public class App extends Application {
 	
+	public static final Logger LOGGER = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
+	
 	private SettingsIO settingsIO;
 	private Registry myRegistry;
 
@@ -29,7 +35,8 @@ public class App extends Application {
 	 */
 	public static void main_proxy(String[] args) {
 		MyLogger.setup();
-		
+		LOGGER.log(Level.INFO, "Java version: " + System.getProperty("java.version")
+			+ ", Operating system: "+System.getProperty("os.name"));
 		launch(args);
 	}
 
@@ -50,6 +57,7 @@ public class App extends Application {
 		if (!configDir.exists()) {
 			if (!configDir.mkdirs()) {
 				String errorMsg = "Could not create config directory at location:\n"+configDir.getAbsolutePath();
+				LOGGER.severe(errorMsg);
 				throw new RuntimeException(errorMsg);
 			}
 		}
@@ -76,7 +84,7 @@ public class App extends Application {
 
 	@Override
 	public void stop() throws Exception {
-		System.out.println("Platform stopping, interrupting all threads");
+		LOGGER.info("Platform stopping, interrupting all threads");
 		
 		long start = System.currentTimeMillis();
 		long patience = 500;
@@ -88,11 +96,10 @@ public class App extends Application {
 		for (Thread t : Globals.THREADS) {
 			t.join(Math.max(0, patience + start - System.currentTimeMillis()));
 		}
-		
-		System.out.println("Saving settings file");
+
+		LOGGER.info("Saving settings file");
 		
 		settingsIO.saveRegistry(myRegistry); // Save
-		
 		
 		super.stop();
 	}

@@ -1,8 +1,11 @@
 package no.artorp.profilio.javafx.mainwindowcells;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableCell;
@@ -15,6 +18,8 @@ import no.artorp.profilio.javafx.MainWindowController;
 import no.artorp.profilio.javafx.Profile;
 
 public class ProfileNameCell extends TableCell<Profile, Profile> {
+	
+	public static final Logger LOGGER = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
 	
 	private TextField textField = new TextField();
 	private MainWindowController mainController;
@@ -97,14 +102,14 @@ public class ProfileNameCell extends TableCell<Profile, Profile> {
 		try {
 			profile.renameFile(newName);
 		} catch (InvalidPathException | FactorioProfileManagerException e_1) {
-			e_1.printStackTrace();
+			LOGGER.log(Level.SEVERE, "Invalid filename", e_1);
 			Alert exceptionDialog = new ExceptionDialog(e_1, "Invalid filename.");
 			exceptionDialog.showAndWait();
 			cancelEdit();
 			this.mainController.stopIgnoreTheseEvents(oldPath, newPath);
 			return;
 		} catch (IOException e_2) {
-			e_2.printStackTrace();
+			LOGGER.log(Level.SEVERE, "An error occurred while renaming", e_2);
 			Alert exceptionDialog = new ExceptionDialog(e_2, "An error occurred while renaming.");
 			exceptionDialog.showAndWait();
 			cancelEdit();
