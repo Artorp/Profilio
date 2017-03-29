@@ -8,7 +8,7 @@ import java.nio.file.Paths;
  */
 public class FileLocations {
 	
-	public final static String DIR_CONFIG_NAME = "Factorio Profile Manager";
+	public final static String DIR_CONFIG_NAME = "factorio_profilio";
 	public final static String DIR_PROFILE_NAME = "fpm";
 	private static String OS = System.getProperty("os.name").toUpperCase();
 	
