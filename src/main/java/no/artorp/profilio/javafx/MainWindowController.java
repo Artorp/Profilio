@@ -239,9 +239,19 @@ public class MainWindowController implements WatcherListener {
 		
 		buttonDeactivate.setOnAction(event -> {
 			Profile activeProfile = myRegistry.getActiveProfile();
-			Path userDataPath = myRegistry.getFactorioDataPath();
+			Path userDataPath;
 			
 			if (activeProfile == null) return;
+			
+			FactorioInstallation fi = activeProfile.getFactorioInstallation();
+			
+			if (fi != null
+					&& fi.isUseCustomConfigPath()
+					&& fi.getCustomConfigPath() != null) {
+				userDataPath = fi.getCustomConfigPath();
+			} else {
+				userDataPath = myRegistry.getFactorioDataPath();
+			}
 			
 			try {
 				fileIO.revertMoveGeneral(myRegistry.getMoveMethod(), userDataPath, activeProfile.getDirectory().toPath());
