@@ -96,7 +96,7 @@ public class MainWindowController implements WatcherListener {
 			Platform.runLater(() -> {
 				try {
 					settingsIO.initializeRegistry(myRegistry);
-					fileIO.createProfilesDir(myRegistry);
+					// fileIO.createProfilesDir(myRegistry); // Moved to initial setup button
 					openSettingsWindow();
 				} catch (IOException e) {
 					LOGGER.log(Level.SEVERE, "Error when initializing register", e);

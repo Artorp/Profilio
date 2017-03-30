@@ -99,6 +99,8 @@ public class SettingsController {
 			File initDir = myRegistry.factorioDataPathProperty().getValue().toFile();
 			if (initDir.exists()) {
 				directoryChooser.setInitialDirectory(initDir);
+			} else {
+				directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 			}
 			File newDataPath = directoryChooser.showDialog(settingsStage);
 			if (newDataPath != null) {
@@ -113,8 +115,13 @@ public class SettingsController {
 		
 		buttonBrowseProfilesDir.setOnAction(event->{
 			File initDir = myRegistry.factorioProfilesPathProperty().getValue().toFile();
+			File userDataDir = myRegistry.factorioDataPathProperty().getValue().toFile();
 			if (initDir.exists()) {
 				directoryChooser.setInitialDirectory(initDir);
+			} else if (userDataDir.exists()) {
+				directoryChooser.setInitialDirectory(userDataDir);
+			} else {
+				directoryChooser.setInitialDirectory(null);
 			}
 			File newDataPath = directoryChooser.showDialog(settingsStage);
 			if (newDataPath != null) {
@@ -614,13 +621,23 @@ public class SettingsController {
 		// Verify existence of profile folder
 		Path profileDir = myRegistry.getFactorioProfilesPath();
 		if (!profileDir.toFile().exists()) {
-			Alert alert = new Alert(AlertType.WARNING);
-			//alert.setTitle("Profile folder not found!");
+			// Let user confirm directory creation
+			ButtonType btCancel = new ButtonType("Wait, let me change it",
+					ButtonData.CANCEL_CLOSE);
+			Alert alert = new Alert(AlertType.CONFIRMATION, "", ButtonType.OK, btCancel);
 			alert.setHeaderText(null);
-			alert.setContentText("Could not find profile folder" + System.lineSeparator()
-			+ System.lineSeparator() + "Missing: "+profileDir.toString());
-			alert.showAndWait();
-			return false;
+			alert.setContentText(String.format("Creating profile directory\n\nThe new folder will be created at\n%s", profileDir));
+			Optional<ButtonType> result = alert.showAndWait();
+			
+			if (result.isPresent()) {
+				if (result.get() == btCancel) {
+					return false;
+				} else {
+					fileIO.createProfilesDir(myRegistry);
+				}
+			} else {
+				return false;
+			}
 		}
 		
 		// Analyze actions required
