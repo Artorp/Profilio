@@ -673,27 +673,22 @@ public class SettingsController {
 		Optional<ButtonType> result = confirm.showAndWait();
 		
 		if (result.get().getButtonData() == ButtonData.CANCEL_CLOSE) {
-			/*
-			Alert success = new Alert(AlertType.INFORMATION);
-			success.setHeaderText(null);
-			success.setContentText("Operation cancelled, no file operations performed.");
-			success.showAndWait();
-			*/
 			return false;
 		}
 		
 		// Move files
 		try {
 			fileIO.performInitialSetup(myRegistry);
-		} catch (FactorioProfileManagerException e) {
-			LOGGER.log(Level.SEVERE, "Caught exception during initial setup", e);
-			return false;
-		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, "Caught exception during initial setup", e);
+		} catch (FactorioProfileManagerException | IOException e) {
+			String errorMsg = "Exception during initial profile transfer";
+			LOGGER.log(Level.SEVERE, errorMsg, e);
+			Alert alert = new ExceptionDialog(e, errorMsg
+					+ "\n\nPlease close the application and verify location of mods and saves folder");
+			alert.showAndWait();
 			return false;
 		}
 		
-		// TODO: Check if stuff was successfully transferred
+		// This will only show if file transfer above didn't throw exception
 		Alert success = new Alert(AlertType.INFORMATION);
 		success.setHeaderText(null);
 		success.setContentText("Saves and mods folders successfully transferred.");
