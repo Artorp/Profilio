@@ -263,8 +263,8 @@ public class SettingsIO {
 				if (g.toString().toLowerCase().contains("steam")) {
 					Alert info = new Alert(AlertType.INFORMATION);
 					info.setHeaderText(null);
-					info.setContentText("Found steam version:\n"
-							+ g.toString()+"\n\nMake sure Steam Cloud is deactivated to prevent saves conflict!"
+					info.setContentText("Reminder: If you're using Steam, make sure Steam Cloud "
+							+ "is deactivated to prevent saves conflict!"
 							+ "\n\nTip: Store the profile directory in a cloud service "
 							+ "(Dropbox, Google Drive, OneDrive, etc) to keep saves and mods secure");
 					info.showAndWait();
