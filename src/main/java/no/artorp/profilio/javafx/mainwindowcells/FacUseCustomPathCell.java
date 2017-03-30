@@ -9,6 +9,8 @@ public class FacUseCustomPathCell extends TableCell<FactorioInstallation, Boolea
 	protected void updateItem(Boolean item, boolean empty) {
 		super.updateItem(item, empty);
 		
+		FactorioInstallation fi = (FactorioInstallation) getTableRow().getItem();
+		
 		if (empty || item == null) {
 			setText(null);
 			setGraphic(null);
@@ -16,7 +18,7 @@ public class FacUseCustomPathCell extends TableCell<FactorioInstallation, Boolea
 			setText(item.booleanValue() ? "Y" : "N" );
 			if (item.booleanValue()) {
 				// Show custom background
-				if (((FactorioInstallation) getTableRow().getItem()).getCustomConfigPath() == null) {
+				if (fi == null || fi.getCustomConfigPath() == null) {
 					// Red if no path defined
 					setStyle("-fx-alignment: CENTER;-fx-background-color: rgba(255, 0, 0, 0.5);");
 				} else {
