@@ -16,9 +16,11 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -178,6 +180,55 @@ public class SettingsController {
 			LOGGER.warning("Symbolic links not supported, disabling feature");
 			radioSymlink.setDisable(true);
 		}
+		
+		// Set effects, only when not initialized
+		DropShadow borderYellow = new DropShadow(3,
+				new Color((246f/255f), (249f/255f), (14f/255f), 0.8));
+		DropShadow borderGreen = new DropShadow(3,
+				new Color((29f/255f), (229f/255f), (14f/225f), 0.8));
+		
+		ChangeListener<Toggle> effectToggleListener = (observable, oldValue, newValue) -> {
+			if (newValue == null) {
+				// Nothing selected, show yellow border glow
+				for (Toggle t : moveMethod.getToggles()) {
+					RadioButton rb = (RadioButton) t;
+					if (rb.isDisabled()) {
+						rb.setEffect(null);
+					} else {
+						rb.setEffect(borderYellow);
+					}
+				}
+			} else {
+				for (Toggle t : moveMethod.getToggles()) {
+					RadioButton rb = (RadioButton) t;
+					if (rb.equals(newValue)) {
+						rb.setEffect(borderGreen);
+					} else {
+						rb.setEffect(null);
+					}
+				}
+				// Add effect to "First time initialization" button
+				buttonFirstTimeInit.setEffect(borderYellow);
+			}
+		};
+		
+		if (! myRegistry.getHasInitialized().booleanValue()) {
+			// Add effect to radio buttons
+			moveMethod.selectedToggleProperty().addListener(effectToggleListener);
+			effectToggleListener.changed(null, null, moveMethod.getSelectedToggle());
+		}
+		
+		myRegistry.hasInitializedProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue != null && newValue.booleanValue()) {
+				radioJunction.setEffect(null);
+				radioSymlink.setEffect(null);
+				radioRename.setEffect(null);
+				buttonFirstTimeInit.setEffect(null);
+				moveMethod.selectedToggleProperty().removeListener(effectToggleListener);
+			} else {
+				moveMethod.selectedToggleProperty().addListener(effectToggleListener);
+			}
+		});
 		
 		moveMethod.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
 			Path userDataPath = myRegistry.getFactorioDataPath();
