@@ -320,27 +320,24 @@ public class SettingsController {
 			alert.setHeaderText(null);
 			String content = 
 			"NTFS Junction\n"
-			+ "    Similar to symbolic links in practice, but preferable on "
+			+ "    Link to a directory. Preferable on "
 			+ "Windows systems as Windows requires elevated permission for "
 			+ "symbolic link creation."
 			+ "\n\n"
 			+ "Symbolic links\n"
-			+ "    Use symbolic links, similar to NTFS junctions. Requires "
-			+ "special permissions on Windows systems."
+			+ "    Similar to NTFS junctions. Requires special permissions "
+			+ "on Windows systems."
 			+ "\n\n"
 			+ "Rename directory\n"
-			+ "    While technically a rename, it will move the root folder "
-			+ "when a new profile is selected. "
-			+ "Example: Profile \"foo\" is active and profile \"bar\" is "
-			+ "activated. Files belonging to \"foo\" is moved back to the "
-			+ "profile folder, and files from \"bar\" are moved to the user "
-			+ "data folder. Junctions or symlinks are preferable to this "
-			+ "alternative as folders stay in the same directory while "
-			+ "links to them are modified."
+			+ "    Move folder within a disk drive using a rename. Symlinks "
+			+ "or junctions are preferable as those are links to folders "
+			+ "instead of moving the folder."
 			+ "\n\n"
-			+ "Disabled / grayed out option means that feature is not "
-			+ "available on your system.";
+			+ "Disabled / grayed out options means that feature is not "
+			+ "available on your system, or you don't have the required "
+			+ "permissions.";
 			alert.setContentText(content);
+			alert.getDialogPane().setPrefWidth(640);
 			alert.showAndWait();
 		});
 		
