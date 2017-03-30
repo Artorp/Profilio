@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.beans.Observable;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
@@ -186,6 +187,10 @@ public class SettingsController {
 				activeProfilePath = activeProfile.getDirectory().toPath();
 			}
 			if (oldValue != null && (activeProfile != null)) {
+				
+				// TODO: Handle custom profiles in move method changes
+				
+				
 				if (oldValue.equals(radioJunction)) {
 					try {
 						fileIO.revertProfileJunctions(userDataPath);
@@ -332,7 +337,6 @@ public class SettingsController {
 			boolean noSelection = (newValue.intValue() == -1);
 			buttonRemoveEntry.setDisable(noSelection);
 			buttonBrowse.setDisable(noSelection);
-			//buttonCustomPath.setDisable(noSelection);
 		});
 		
 		buttonNewEntry.setOnAction(event->{
@@ -392,6 +396,112 @@ public class SettingsController {
 			}
 		});
 		
+		ChangeListener<FactorioInstallation> cl = (observable, oldValue, newValue) -> {
+			if (newValue == null) {
+				checkBoxCustomPath.setDisable(true);
+				textFieldCustomPath.setText("");
+			} else {
+				checkBoxCustomPath.setDisable(false);
+				textFieldCustomPath.setText(""+newValue.getCustomConfigPath());
+				checkBoxCustomPath.setSelected(newValue.isUseCustomConfigPath());
+			}
+		};
+		
+		checkBoxCustomPath.setOnAction(event -> {
+			System.out.println("Checked: "+checkBoxCustomPath.isSelected());
+			FactorioInstallation fi = tableViewInstallations.getSelectionModel().getSelectedItem();
+			if (fi == null) return;
+			fi.setUseCustomConfigPath(
+					checkBoxCustomPath.isSelected()
+					);
+			
+			Profile p = myRegistry.getActiveProfile();
+			if (p == null) return;
+			
+			if (p.getFactorioInstallation().equals(fi)
+					&& fi.getCustomConfigPath() != null) {
+				// Profile has this installation as active profile, move between global or fi
+				
+				Path global = myRegistry.getFactorioDataPath();
+				Path custom = fi.getCustomConfigPath();
+				
+				Path from;
+				Path to;
+				
+				if (checkBoxCustomPath.isSelected()) {
+					from = global;
+					to = custom;
+				} else {
+					from = custom;
+					to = global;
+				}
+				
+				try {
+					fileIO.revertMoveGeneral(myRegistry.getMoveMethod(),
+							from,
+							p.getDirectory().toPath());
+					fileIO.performMoveGeneral(myRegistry.getMoveMethod(),
+							to,
+							p.getDirectory().toPath());
+				} catch (IOException e) {
+					String errorMsg = "Error when moving profile directory to new user data directory";
+					LOGGER.log(Level.SEVERE, errorMsg, e);
+					Alert alert = new ExceptionDialog(e, errorMsg);
+					alert.showAndWait();
+				}
+				
+			}
+		});
+		
+		buttonCustomPath.setOnAction(event -> {
+			FactorioInstallation fi = tableViewInstallations.getSelectionModel().getSelectedItem();
+			if (fi == null) return;
+			if (! fi.isUseCustomConfigPath()) return;
+			
+			Path previousUserDataPath;
+			if (fi.getCustomConfigPath() != null) {
+				previousUserDataPath = fi.getCustomConfigPath();
+			} else {
+				previousUserDataPath = myRegistry.getFactorioDataPath();
+			}
+			
+			// First, open the dialog and get new path
+			directoryChooser.setInitialDirectory(fi.getPath().getParent().toFile());
+			directoryChooser.setTitle("Select new user data path");
+			File newUserDataPath = directoryChooser.showDialog(settingsStage);
+			if (newUserDataPath == null) return; // User cancelled
+			
+			Profile p = myRegistry.getActiveProfile();
+			if (p != null && p.getFactorioInstallation().equals(fi)) {
+				try {
+					// If active profile has this installation, revert move of active profile
+					fileIO.revertMoveGeneral(myRegistry.getMoveMethod(),
+							previousUserDataPath,
+							p.getDirectory().toPath());
+					
+					// And move to new location
+					fileIO.performMoveGeneral(myRegistry.getMoveMethod(),
+							newUserDataPath.toPath(),
+							p.getDirectory().toPath());
+				} catch (IOException e) {
+					String errorMsg = "Error when moving profile folder";
+					LOGGER.log(Level.SEVERE, errorMsg, e);
+					Alert alert = new ExceptionDialog(e, errorMsg);
+					alert.showAndWait();
+					return;
+				}
+			}
+			
+			// Finally, set installation values
+			fi.setCustomConfigPath(newUserDataPath.toPath());
+		});
+		
+		cl.changed(null, null, null); // Force a revaluation
+		
+		// Bind checkbox to if item is selected, and its value
+		tableViewInstallations.getSelectionModel().selectedItemProperty().addListener(cl);
+		
+		// Bind custom user data path ui items to if checkbox is checked and item is selected
 		buttonCustomPath.disableProperty().bind(checkBoxCustomPath.selectedProperty().not().or(
 				tableViewInstallations.getSelectionModel().selectedIndexProperty().isEqualTo(-1)
 				));
