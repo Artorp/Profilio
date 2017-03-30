@@ -49,7 +49,7 @@
                               </RadioButton>
                               <AnchorPane VBox.vgrow="ALWAYS">
                                  <children>
-                                    <Button fx:id="buttonMoreInfo" mnemonicParsing="false" text="More information" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+                                    <Button fx:id="buttonMoreInfo" mnemonicParsing="false" text="More information" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="5.0" />
                                  </children>
                               </AnchorPane>
                            </children>
@@ -204,7 +204,7 @@
    <bottom>
       <AnchorPane BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="buttonClose" mnemonicParsing="false" text="Close" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+            <Button fx:id="buttonClose" mnemonicParsing="false" text="Close" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="420.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
          </children>
       </AnchorPane>
    </bottom>

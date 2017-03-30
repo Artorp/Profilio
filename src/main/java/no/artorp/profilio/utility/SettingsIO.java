@@ -20,6 +20,7 @@ import com.google.gson.GsonBuilder;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import no.artorp.profilio.javafx.ExceptionDialog;
 import no.artorp.profilio.javafx.FactorioInstallation;
 import no.artorp.profilio.javafx.KeyValuePair;
@@ -258,6 +259,16 @@ public class SettingsIO {
 				fi.setCustomConfigPath(null);
 				registry.getFactorioInstallations().add(fi);
 				LOGGER.info("Installation found!\n" + g);
+				// If installation seems to be from steam, notify user about steam cloud storage
+				if (g.toString().toLowerCase().contains("steam")) {
+					Alert info = new Alert(AlertType.INFORMATION);
+					info.setHeaderText(null);
+					info.setContentText("Found steam version:\n"
+							+ g.toString()+"\n\nMake sure Steam Cloud is deactivated to prevent saves conflict!"
+							+ "\n\nTip: Store the profile directory in a cloud service "
+							+ "(Dropbox, Google Drive, OneDrive, etc) to keep saves and mods secure");
+					info.showAndWait();
+				}
 				break;
 			}
 		}
