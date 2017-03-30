@@ -26,6 +26,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import no.artorp.profilio.exceptions.FactorioProfileManagerException;
 import no.artorp.profilio.javafx.mainwindowcells.FacNameCell;
+import no.artorp.profilio.javafx.mainwindowcells.FacUseCustomPathCell;
 import no.artorp.profilio.utility.FileIO;
 import no.artorp.profilio.utility.FileLocations;
 import no.artorp.profilio.utility.SettingsIO;
@@ -61,7 +62,7 @@ public class SettingsController {
 	@FXML private TableView<FactorioInstallation> tableViewInstallations;
 	@FXML private TableColumn<FactorioInstallation, String> columnName;
 	@FXML private TableColumn<FactorioInstallation, String> columnDir;
-	@FXML private TableColumn<FactorioInstallation, FactorioInstallation> columnCustomPath;
+	@FXML private TableColumn<FactorioInstallation, Boolean> columnCustomPath;
 	@FXML private CheckBox checkBoxCustomPath;
 	@FXML private TextField textFieldCustomPath;
 	@FXML private Label labelCustomPath;
@@ -356,6 +357,10 @@ public class SettingsController {
 		columnName.setCellFactory(tableCol->new FacNameCell(this.mainTableViewData));
 		
 		columnDir.setCellValueFactory(cellFeatures->cellFeatures.getValue().pathProperty().asString());
+		
+		columnCustomPath.setCellValueFactory(cellFeatures -> cellFeatures.getValue().useCustomConfigPathProperty());
+		columnCustomPath.setCellFactory(tableCol -> new FacUseCustomPathCell());
+		columnCustomPath.setStyle("-fx-alignment: CENTER;");
 		
 		
 		tableViewInstallations.setItems(tableData);
