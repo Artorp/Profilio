@@ -3,6 +3,8 @@ Profile manager for Factorio
 
 ## Features
 
+![image](readme_images/Main.png)
+
 * Keep your saves and mods in sync with profiles, each profile is a folder on your disk
 * Seemlessly switch between different profiles
 * Tie your profiles to a specific Factorio version, and switch between different versions with a single click
