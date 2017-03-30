@@ -58,12 +58,15 @@ public class SettingsController {
 	@FXML private TableView<FactorioInstallation> tableViewInstallations;
 	@FXML private TableColumn<FactorioInstallation, String> columnName;
 	@FXML private TableColumn<FactorioInstallation, String> columnDir;
+	@FXML private TableColumn<FactorioInstallation, FactorioInstallation> columnCustomPath;
+	@FXML private CheckBox checkBoxCustomPath;
 	
 	private ObservableList<Profile> mainTableViewData;
 	
 	@FXML private Button buttonNewEntry;
 	@FXML private Button buttonRemoveEntry;
 	@FXML private Button buttonBrowse;
+	@FXML private Button buttonCustomPath;
 	@FXML private Button buttonClose;
 
 	public SettingsController(Stage primaryStage,
@@ -327,6 +330,7 @@ public class SettingsController {
 			boolean noSelection = (newValue.intValue() == -1);
 			buttonRemoveEntry.setDisable(noSelection);
 			buttonBrowse.setDisable(noSelection);
+			//buttonCustomPath.setDisable(noSelection);
 		});
 		
 		buttonNewEntry.setOnAction(event->{
@@ -385,6 +389,10 @@ public class SettingsController {
 				FileIO.browse(toBrowse);
 			}
 		});
+		
+		buttonCustomPath.disableProperty().bind(checkBoxCustomPath.selectedProperty().not().or(
+				tableViewInstallations.getSelectionModel().selectedIndexProperty().isEqualTo(-1)
+				));
 		
 		// Close button
 		buttonClose.setOnAction(event->{
