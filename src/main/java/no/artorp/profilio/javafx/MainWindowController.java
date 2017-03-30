@@ -67,6 +67,7 @@ public class MainWindowController implements WatcherListener {
 	@FXML private Button buttonNewProfile;
 	@FXML private Button buttonBrowse;
 	@FXML private Button buttonRefresh;
+	@FXML private Button buttonDeactivate;
 	@FXML private Button buttonSettings;
 	@FXML private Button buttonStartFactorio;
 	
@@ -234,6 +235,26 @@ public class MainWindowController implements WatcherListener {
 				buttonRefresh.setDisable(false);
 				buttonNewProfile.setDisable(false);
 			}
+		});
+		
+		buttonDeactivate.setOnAction(event -> {
+			Profile activeProfile = myRegistry.getActiveProfile();
+			Path userDataPath = myRegistry.getFactorioDataPath();
+			
+			if (activeProfile == null) return;
+			
+			try {
+				fileIO.revertMoveGeneral(myRegistry.getMoveMethod(), userDataPath, activeProfile.getDirectory().toPath());
+			} catch (IOException e) {
+				String errorMsg = "There was an error when moving profile folders\n"+activeProfile.getDirectory();
+				LOGGER.log(Level.SEVERE, errorMsg, e);
+				Alert alert = new ExceptionDialog(e, errorMsg);
+				alert.showAndWait();
+			}
+			
+			activeProfile.setIsActive(false);
+			myRegistry.setActiveProfile(null);
+			settingsIO.saveRegistry(myRegistry); // Save
 		});
 		
 		buttonSettings.setOnAction(event->{

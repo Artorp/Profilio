@@ -50,12 +50,14 @@ public class ProfileIsActiveTableCell extends TableCell<Profile, Boolean> {
 				Profile previousActive = registry.getActiveProfile();
 				Path userDataPath = registry.getFactorioDataPath();
 				
-				try {
-					fileIO.revertMoveGeneral(registry.getMoveMethod(), userDataPath, previousActive.getDirectory().toPath());
-				} catch (IOException e) {
-					LOGGER.log(Level.SEVERE, "Exception when reverting move", e);
-					Alert alert = new ExceptionDialog(e);
-					alert.showAndWait();
+				if (previousActive != null) {
+					try {
+						fileIO.revertMoveGeneral(registry.getMoveMethod(), userDataPath, previousActive.getDirectory().toPath());
+					} catch (IOException e) {
+						LOGGER.log(Level.SEVERE, "Exception when reverting move", e);
+						Alert alert = new ExceptionDialog(e);
+						alert.showAndWait();
+					}
 				}
 				
 				try {
@@ -70,7 +72,6 @@ public class ProfileIsActiveTableCell extends TableCell<Profile, Boolean> {
 				p.setIsActive(newVal);
 				registry.setActiveProfile(p);
 				settingsIO.saveRegistry(registry); // Save
-
 			}
 		});
 	}

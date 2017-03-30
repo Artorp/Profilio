@@ -57,10 +57,10 @@ public class Registry {
 	public void setupPathProfileBindings(ObservableList<Profile> profiles) {
 		
 		this.activeProfile.addListener((observable, o, n)->{
-			LOGGER.info("Active profile was changed: "+n.getName());
+			LOGGER.info("Active profile was changed: " + (n == null ? n : n.getName()));
 		});
 		this.activeProfilePath.addListener((observable, o, n)->{
-			LOGGER.info("Active path was changed: "+n.getFileName());
+			LOGGER.info("Active path was changed: " + (n == null ? n : n.getFileName()));
 		});
 		
 		
