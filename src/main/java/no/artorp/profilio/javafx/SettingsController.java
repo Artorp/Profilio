@@ -501,23 +501,27 @@ public class SettingsController {
 		buttonCustomPath.setOnAction(event -> {
 			FactorioInstallation fi = tableViewInstallations.getSelectionModel().getSelectedItem();
 			if (fi == null) return;
-			if (! fi.isUseCustomConfigPath()) return;
 			
 			Path previousUserDataPath;
+			File initialDirectory;
 			if (fi.getCustomConfigPath() != null) {
 				previousUserDataPath = fi.getCustomConfigPath();
+				initialDirectory = fi.getCustomConfigPath().toFile();
 			} else {
 				previousUserDataPath = myRegistry.getFactorioDataPath();
+				initialDirectory = fi.getPath().getParent().toFile();
 			}
 			
+			
 			// First, open the dialog and get new path
-			directoryChooser.setInitialDirectory(fi.getPath().getParent().toFile());
+			directoryChooser.setInitialDirectory(initialDirectory);
 			directoryChooser.setTitle("Select new user data path");
 			File newUserDataPath = directoryChooser.showDialog(settingsStage);
 			if (newUserDataPath == null) return; // User cancelled
 			
 			Profile p = myRegistry.getActiveProfile();
-			if (p != null && p.getFactorioInstallation().equals(fi)) {
+			if (fi.isUseCustomConfigPath()
+					&& p != null && p.getFactorioInstallation().equals(fi)) {
 				try {
 					// If active profile has this installation, revert move of active profile
 					fileIO.revertMoveGeneral(myRegistry.getMoveMethod(),
@@ -541,15 +545,15 @@ public class SettingsController {
 			fi.setCustomConfigPath(newUserDataPath.toPath());
 		});
 		
-		cl.changed(null, null, null); // Force a revaluation
+		cl.changed(null, null, null); // Force a re-evaluation
 		
 		// Bind checkbox to if item is selected, and its value
 		tableViewInstallations.getSelectionModel().selectedItemProperty().addListener(cl);
 		
 		// Bind custom user data path ui items to if checkbox is checked and item is selected
-		buttonCustomPath.disableProperty().bind(checkBoxCustomPath.selectedProperty().not().or(
+		buttonCustomPath.disableProperty().bind(
 				tableViewInstallations.getSelectionModel().selectedIndexProperty().isEqualTo(-1)
-				));
+				);
 		
 		textFieldCustomPath.disableProperty().bind(checkBoxCustomPath.selectedProperty().not().or(
 				tableViewInstallations.getSelectionModel().selectedIndexProperty().isEqualTo(-1)
