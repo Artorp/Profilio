@@ -6,5 +6,7 @@ package no.artorp.profilio.json_models;
 public class FactorioInstallationsJson {
 	public String customName;
 	public String path;
-	public String targetArgs; // Stuff like "-config <config>" etc
+	
+	public boolean useCustomConfigPath;
+	public String customConfigPath;
 }

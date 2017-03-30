@@ -104,6 +104,10 @@ public class SettingsIO {
 			FactorioInstallation fi = new FactorioInstallation();
 			fi.setName(element.customName);
 			fi.setPath(Paths.get(element.path));
+			fi.setUseCustomConfigPath(element.useCustomConfigPath);
+			fi.setCustomConfigPath(element.customConfigPath == null
+					? null
+					: Paths.get(element.customConfigPath));
 			factorioInstallations.add(fi);
 		}
 		
@@ -159,6 +163,10 @@ public class SettingsIO {
 			FactorioInstallationsJson jsonObj = new FactorioInstallationsJson();
 			jsonObj.customName = fi.getName();
 			jsonObj.path = fi.getPath().toAbsolutePath().toString();
+			jsonObj.useCustomConfigPath = fi.isUseCustomConfigPath();
+			jsonObj.customConfigPath = fi.getCustomConfigPath() == null
+					? null
+					: fi.getCustomConfigPath().toAbsolutePath().toString();
 			installations.add(jsonObj);
 		}
 		settings.factorioInstallations = installations;
@@ -246,6 +254,8 @@ public class SettingsIO {
 				FactorioInstallation fi = new FactorioInstallation();
 				fi.setName("Factorio");
 				fi.setPath(g);
+				fi.setUseCustomConfigPath(false);
+				fi.setCustomConfigPath(null);
 				registry.getFactorioInstallations().add(fi);
 				LOGGER.info("Installation found!\n" + g);
 				break;
