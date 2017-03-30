@@ -128,6 +128,7 @@ public class FacVersionNameCell extends TableCell<Profile, String> {
 		
 		setText(null);
 		setGraphic(comboBox);
+		comboBox.show();
 	}
 
 	@Override
