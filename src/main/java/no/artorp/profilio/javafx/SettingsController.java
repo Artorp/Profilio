@@ -60,6 +60,8 @@ public class SettingsController {
 	@FXML private TableColumn<FactorioInstallation, String> columnDir;
 	@FXML private TableColumn<FactorioInstallation, FactorioInstallation> columnCustomPath;
 	@FXML private CheckBox checkBoxCustomPath;
+	@FXML private TextField textFieldCustomPath;
+	@FXML private Label labelCustomPath;
 	
 	private ObservableList<Profile> mainTableViewData;
 	
@@ -393,6 +395,16 @@ public class SettingsController {
 		buttonCustomPath.disableProperty().bind(checkBoxCustomPath.selectedProperty().not().or(
 				tableViewInstallations.getSelectionModel().selectedIndexProperty().isEqualTo(-1)
 				));
+		
+		textFieldCustomPath.disableProperty().bind(checkBoxCustomPath.selectedProperty().not().or(
+				tableViewInstallations.getSelectionModel().selectedIndexProperty().isEqualTo(-1)
+				));
+		
+		labelCustomPath.disableProperty().bind(checkBoxCustomPath.selectedProperty().not().or(
+				tableViewInstallations.getSelectionModel().selectedIndexProperty().isEqualTo(-1)
+				));
+		
+		
 		
 		// Close button
 		buttonClose.setOnAction(event->{

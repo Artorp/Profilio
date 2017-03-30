@@ -106,12 +106,12 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label minWidth="-Infinity" text="User data directory:">
+                  <Label minWidth="-Infinity" text="Global user data directory:">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin>
                   </Label>
-                  <Label text="Global profiles directory:" GridPane.rowIndex="1" />
+                  <Label text="Profiles directory:" GridPane.rowIndex="1" />
                   <TextField fx:id="textFieldUserData" editable="false" GridPane.columnIndex="1" />
                   <TextField fx:id="textFieldProfilesDir" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <Button fx:id="buttonBrowseUserData" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Browse..." GridPane.columnIndex="2" />
@@ -166,20 +166,37 @@
                               <Insets bottom="5.0" left="5.0" right="5.0" />
                            </VBox.margin>
                         </Button>
-                        <CheckBox fx:id="checkBoxCustomPath" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Custom config path">
-                           <VBox.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
-                           </VBox.margin>
-                        </CheckBox>
-                        <Button fx:id="buttonCustomPath" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Change config path">
-                           <VBox.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" />
-                           </VBox.margin>
-                        </Button>
                      </children>
                   </VBox>
                </children>
             </HBox>
+            <CheckBox fx:id="checkBoxCustomPath" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Use custom user data directory">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </CheckBox>
+            <GridPane hgap="10.0" vgap="10.0">
+               <columnConstraints>
+                  <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="130.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <Label fx:id="labelCustomPath" minWidth="-Infinity" text="Custom user data path">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin>
+                  </Label>
+                  <TextField fx:id="textFieldCustomPath" editable="false" GridPane.columnIndex="1" />
+                  <Button fx:id="buttonCustomPath" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Browse..." GridPane.columnIndex="2" />
+               </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </GridPane>
             <Separator prefWidth="200.0" />
          </children>
       </VBox>
