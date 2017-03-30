@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>no.artorp.profilio</groupId>
 	<artifactId>profilio</artifactId>
-	<version>0.3.1-SNAPSHOT</version>
+	<version>0.3.1</version>
 	<name>Profilio</name>
 	<description>A Factorio profile manager</description>
 	<properties>
