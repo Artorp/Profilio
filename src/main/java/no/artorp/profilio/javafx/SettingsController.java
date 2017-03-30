@@ -186,83 +186,72 @@ public class SettingsController {
 			if (activeProfile != null) {
 				activeProfilePath = activeProfile.getDirectory().toPath();
 			}
-			if (oldValue != null && (activeProfile != null)) {
+			if (oldValue != null && (activeProfile != null)
+					&& activeProfile.getFactorioInstallation() != null) {
 				
-				// TODO: Handle custom profiles in move method changes
-				
-				
+				int prevMoveMethod;
 				if (oldValue.equals(radioJunction)) {
-					try {
-						fileIO.revertProfileJunctions(userDataPath);
-					} catch (IOException e) {
-						LOGGER.log(Level.SEVERE, "Error deleting junction links", e);
-						Alert alert = new ExceptionDialog(e);
-						alert.showAndWait();
-						return;
-					}
+					prevMoveMethod = FileIO.METHOD_JUNCTION;
 				} else if (oldValue.equals(radioSymlink)) {
-					try {
-						fileIO.revertProfileSymlinks(userDataPath);
-					} catch (IOException e) {
-						LOGGER.log(Level.SEVERE, "Error deleting symlinks", e);
-						Alert alert = new ExceptionDialog(e);
-						alert.showAndWait();
-						return;
-					}
+					prevMoveMethod = FileIO.METHOD_SYMLINK;
 				} else if (oldValue.equals(radioRename)) {
-					try {
-						fileIO.revertProfileMove(userDataPath, activeProfilePath);
-					} catch (IOException e) {
-						LOGGER.log(Level.SEVERE, "Error moving active profile folders", e);
-						Alert alert = new ExceptionDialog(e);
-						alert.showAndWait();
-						return;
-					}
+					prevMoveMethod = FileIO.METHOD_RENAME;
+				} else {
+					return;
+				}
+				
+				FactorioInstallation fi = activeProfile.getFactorioInstallation();
+				Path oldUserDataPath;
+				if (fi.isUseCustomConfigPath()
+						&& fi.getCustomConfigPath() != null) {
+					oldUserDataPath = fi.getCustomConfigPath();
+				} else {
+					oldUserDataPath = myRegistry.getFactorioDataPath();
+				}
+				try {
+					fileIO.revertMoveGeneral(prevMoveMethod, oldUserDataPath, activeProfilePath);
+				} catch (IOException e1) {
+					LOGGER.log(Level.SEVERE, "Error when changing move method", e1);
+					Alert alert = new ExceptionDialog(e1);
+					alert.showAndWait();
+					return;
 				}
 			}
 			
 			if (newValue != null) {
-				if (newValue.equals(radioJunction)
-						&& myRegistry.getMoveMethod().intValue() != FileIO.METHOD_JUNCTION ) {
+				
+				if (newValue.equals(radioJunction)) {
 					myRegistry.setMoveMethod(FileIO.METHOD_JUNCTION);
-					if (activeProfile != null) {
-						try {
-							fileIO.performProfileJunctionCreation(activeProfilePath, userDataPath);
-						} catch (IOException e) {
-							LOGGER.log(Level.SEVERE, "Error creating junctions", e);
-							Alert alert = new ExceptionDialog(e);
-							alert.showAndWait();
-							return;
-						}
-					}
-				} else if (newValue.equals(radioSymlink)
-						&& myRegistry.getMoveMethod().intValue() != FileIO.METHOD_SYMLINK) {
+				} else if (newValue.equals(radioSymlink)) {
 					myRegistry.setMoveMethod(FileIO.METHOD_SYMLINK);
-					settingsIO.saveRegistry(myRegistry); // Save
-					if (activeProfile != null) {
-						try {
-							fileIO.performProfileSymlinks(activeProfilePath, userDataPath);
-						} catch (IOException e) {
-							LOGGER.log(Level.SEVERE, "Error creating symlinks", e);
-							Alert alert = new ExceptionDialog(e);
-							alert.showAndWait();
-							return;
-						}
+				} else if (newValue.equals(radioRename)) {
+					myRegistry.setMoveMethod(FileIO.METHOD_RENAME);
+				} else {
+					return;
+				}
+				settingsIO.saveRegistry(myRegistry); // Save
+				
+				if (activeProfile != null && oldValue != null) {
+					
+					Path newUserDataPath;
+					FactorioInstallation fi = activeProfile.getFactorioInstallation();
+					if (fi.isUseCustomConfigPath()
+							&& fi.getCustomConfigPath() != null) {
+						newUserDataPath = fi.getCustomConfigPath();
+					} else {
+						newUserDataPath = userDataPath;
 					}
-				} else if (newValue.equals(radioRename)
-						&& myRegistry.getMoveMethod().intValue() != FileIO.METHOD_MOVE) {
-					myRegistry.setMoveMethod(FileIO.METHOD_MOVE);
-					settingsIO.saveRegistry(myRegistry); // Save
-					if (activeProfile != null) {
-						try {
-							fileIO.performProfileMove(activeProfilePath, userDataPath);
-						} catch (IOException e) {
-							LOGGER.log(Level.SEVERE, "Error moving profile folders", e);
-							Alert alert = new ExceptionDialog(e);
-							alert.showAndWait();
-							return;
-						}
+					
+					try {
+						fileIO.performMoveGeneral(myRegistry.getMoveMethod(),
+								newUserDataPath,
+								activeProfilePath);
+					} catch (IOException e) {
+						LOGGER.log(Level.SEVERE, "Error creating new profile folders", e);
+						Alert alert = new ExceptionDialog(e);
+						alert.showAndWait();
 					}
+					
 				}
 			}
 		});
@@ -298,7 +287,7 @@ public class SettingsController {
 		
 		if (myRegistry.getMoveMethod() != null) {
 			Integer intMoveMethod = myRegistry.getMoveMethod();
-			if (intMoveMethod.intValue() == FileIO.METHOD_MOVE) {
+			if (intMoveMethod.intValue() == FileIO.METHOD_RENAME) {
 				radioRename.setSelected(true);
 			} else if (intMoveMethod.intValue() == FileIO.METHOD_JUNCTION) {
 				radioJunction.setSelected(true);

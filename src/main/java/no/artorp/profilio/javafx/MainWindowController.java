@@ -385,7 +385,7 @@ public class MainWindowController implements WatcherListener {
 					Alert alert = new ExceptionDialog(e);
 					alert.showAndWait();
 				}
-			} else if (myRegistry.getMoveMethod() == FileIO.METHOD_MOVE ) {
+			} else if (myRegistry.getMoveMethod() == FileIO.METHOD_RENAME ) {
 				// Maybe user renamed file within an explorer?
 				// Renames not supported in move method unless
 				// renamed from within application

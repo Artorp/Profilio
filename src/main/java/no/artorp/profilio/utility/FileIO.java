@@ -25,7 +25,7 @@ public class FileIO {
 	
 	public static final Logger LOGGER = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
 	
-	public static final int METHOD_MOVE = 1;
+	public static final int METHOD_RENAME = 1;
 	public static final int METHOD_JUNCTION = 2;
 	public static final int METHOD_SYMLINK = 3;
 	
@@ -88,7 +88,7 @@ public class FileIO {
 		
 		int moveMethod = registry.getMoveMethod();
 		
-		if (moveMethod != METHOD_MOVE) {
+		if (moveMethod != METHOD_RENAME) {
 			// If moving, no need to move files back and forth
 			operationsReadable.append("Move: ");
 			operationsReadable.append(System.lineSeparator());
@@ -123,7 +123,7 @@ public class FileIO {
 			profilePath.toFile().mkdir();
 			
 			// No need to move files back and forth
-			if (moveMethod != METHOD_MOVE) {
+			if (moveMethod != METHOD_RENAME) {
 				Files.move(modsPath, newModsPath);
 				Files.move(savesPath, newSavesPath);
 			}
@@ -142,7 +142,7 @@ public class FileIO {
 				Files.createSymbolicLink(modsPath, newModsPath);
 				Files.createSymbolicLink(savesPath, newSavesPath);
 				*/
-			} else if (moveMethod == METHOD_MOVE) {
+			} else if (moveMethod == METHOD_RENAME) {
 				// No need to move files back and forth
 				
 				// Deprecated
@@ -359,7 +359,7 @@ public class FileIO {
 			revertProfileJunctions(factorioUserData);
 		} else if (moveMethod.intValue() == METHOD_SYMLINK) {
 			revertProfileSymlinks(factorioUserData);
-		} else if (moveMethod.intValue() == METHOD_MOVE) {
+		} else if (moveMethod.intValue() == METHOD_RENAME) {
 			revertProfileMove(factorioUserData, toBeRemovedProfilePath);
 		}
 	}
@@ -373,7 +373,7 @@ public class FileIO {
 			performProfileJunctionCreation(copyFrom, factorioUserData);
 		} else if (moveMethod.intValue() == METHOD_SYMLINK) {
 			performProfileSymlinks(copyFrom, factorioUserData);
-		} else if (moveMethod.intValue() == METHOD_MOVE) {
+		} else if (moveMethod.intValue() == METHOD_RENAME) {
 			performProfileMove(copyFrom, factorioUserData);
 		}
 	}
