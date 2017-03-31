@@ -21,6 +21,8 @@ public class ExceptionDialog extends Alert {
 		this.setTitle("An error occurred");
 		this.setHeaderText(headerText);
 		
+		this.setResizable(true);
+		
 		// Create expandable exception
 
 		StringWriter sw = new StringWriter();

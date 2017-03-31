@@ -54,51 +54,45 @@ public class App extends Application {
 				System.getProperty("os.name"),
 				System.getProperty("os.arch")));
 		
-		Thread.setDefaultUncaughtExceptionHandler((t, e) -> Platform.runLater(() -> showUncaughtException(t, e)));
-		Thread.currentThread().setUncaughtExceptionHandler(this::showUncaughtException);
+		Thread.setDefaultUncaughtExceptionHandler(this::handleUncaughtException);
 		
-		try {
-			primaryStage.getIcons().add(new Image( getClass().getResourceAsStream("/icon_16.png")));
-			primaryStage.getIcons().add(new Image( getClass().getResourceAsStream("/icon_32.png")));
-			primaryStage.getIcons().add(new Image( getClass().getResourceAsStream("/icon_48.png")));
-			primaryStage.getIcons().add(new Image( getClass().getResourceAsStream("/icon_256.png")));
-			
-			Registry myRegistry = new Registry();
-			this.myRegistry = myRegistry;
-			
-			// Set up SettingsIO object
-			String fileName = "settings.json";
-			File configDir = FileLocations.getConfigDirectory().toFile();
-			if (!configDir.exists()) {
-				if (!configDir.mkdirs()) {
-					String errorMsg = "Could not create config directory at location:\n"+configDir.getAbsolutePath();
-					LOGGER.severe(errorMsg);
-					throw new RuntimeException(errorMsg);
-				}
+		primaryStage.getIcons().add(new Image( getClass().getResourceAsStream("/icon_16.png")));
+		primaryStage.getIcons().add(new Image( getClass().getResourceAsStream("/icon_32.png")));
+		primaryStage.getIcons().add(new Image( getClass().getResourceAsStream("/icon_48.png")));
+		primaryStage.getIcons().add(new Image( getClass().getResourceAsStream("/icon_256.png")));
+		
+		Registry myRegistry = new Registry();
+		this.myRegistry = myRegistry;
+		
+		// Set up SettingsIO object
+		String fileName = "settings.json";
+		File configDir = FileLocations.getConfigDirectory().toFile();
+		if (!configDir.exists()) {
+			if (!configDir.mkdirs()) {
+				String errorMsg = "Could not create config directory at location:\n"+configDir.getAbsolutePath();
+				LOGGER.severe(errorMsg);
+				throw new RuntimeException(errorMsg);
 			}
-			
-			File settingsFile = new File(configDir + File.separator + fileName);
-			FileIO fileIO = new FileIO();
-			SettingsIO settingsIO = new SettingsIO(settingsFile);
-			this.settingsIO = settingsIO;
-			
-			// Setup scene, controller, stage
-			primaryStage.setTitle("Profilio - Factorio Profile Manager");
-			
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainWindow.fxml"));
-			MainWindowController controller = new MainWindowController(primaryStage, settingsIO, fileIO, myRegistry);
-			loader.setController(controller);
-			BorderPane root = (BorderPane) loader.load();
-			
-			Scene scene = new Scene(root);
-			//scene.getStylesheets().add("/MainWindowStyle.css");
-			primaryStage.setScene(scene);
-			
-			primaryStage.show();
-		} catch (Throwable t) {
-			showUncaughtException(Thread.currentThread(), t);
-			throw t;
 		}
+		
+		File settingsFile = new File(configDir + File.separator + fileName);
+		FileIO fileIO = new FileIO();
+		SettingsIO settingsIO = new SettingsIO(settingsFile);
+		this.settingsIO = settingsIO;
+		
+		// Setup scene, controller, stage
+		primaryStage.setTitle("Profilio - Factorio Profile Manager");
+		
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainWindow.fxml"));
+		MainWindowController controller = new MainWindowController(primaryStage, settingsIO, fileIO, myRegistry);
+		loader.setController(controller);
+		BorderPane root = (BorderPane) loader.load();
+		
+		Scene scene = new Scene(root);
+		//scene.getStylesheets().add("/MainWindowStyle.css");
+		primaryStage.setScene(scene);
+		
+		primaryStage.show();
 	}
 
 	@Override
@@ -123,16 +117,14 @@ public class App extends Application {
 		super.stop();
 	}
 	
-	public void showUncaughtException(Thread t, Throwable e) {
-		try {
-			String errorMsg = String.format("[%s] threw uncaught exception.", t.getName());
-			LOGGER.log(Level.SEVERE, errorMsg, e);
-			Alert alert = new ExceptionDialog(e, errorMsg);
+	public void handleUncaughtException(Thread t, Throwable e) {
+		String errorMsg = String.format("[%s] threw uncaught exception.", t.getName());
+		LOGGER.log(Level.SEVERE, errorMsg, e);
+		if (Platform.isFxApplicationThread()) {
+			Alert alert = new ExceptionDialog(e, errorMsg + "\n\nAn uncaught exception is a strong indicator of a "
+					+ "program transitioning into an unstable state, it is advisable to close and restart the application "
+					+ "before further use");
 			alert.showAndWait();
-		} finally {
-			if (! t.isDaemon()) { // Might change this later
-				Platform.exit();
-			}
 		}
 	}
 	
