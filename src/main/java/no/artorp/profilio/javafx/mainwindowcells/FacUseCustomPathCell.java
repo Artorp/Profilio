@@ -14,6 +14,7 @@ public class FacUseCustomPathCell extends TableCell<FactorioInstallation, Boolea
 		if (empty || item == null) {
 			setText(null);
 			setGraphic(null);
+			setStyle("");
 		} else {
 			setText(item.booleanValue() ? "Y" : "N" );
 			if (item.booleanValue()) {
