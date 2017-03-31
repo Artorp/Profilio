@@ -65,7 +65,7 @@ Requires `gson-2.8.0`
 
 If using maven, use the included pom.xml and run
 
-    mvn clean install
+    mvn clean package
 
 A fat jar is placed in the target folder.
 
