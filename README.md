@@ -12,7 +12,7 @@ Profile manager for Factorio
 
 ## Prerequisites
 
-This program requires Java 8, make sure you have the latest version installed. To avoid bloatware from the official page, Windows users are urged to download a Java installer from https://ninite.com/java8/
+This program requires Java 8, make sure you have the latest version installed. To avoid bloatware from the official page, Windows users are adviced to download a Java installer from https://ninite.com/java8/
 
 ### Linux
 
@@ -66,6 +66,10 @@ Requires `gson-2.8.0`
 If using maven, use the included pom.xml and run
 
     mvn clean package
+
+NB: Change "Built-By" parameter in the MANIFEST.MF by running
+
+    mvn -Duser.name=your_name clean package
 
 A fat jar is placed in the target folder.
 
