@@ -94,9 +94,9 @@ public class SettingsIO {
 		Path configPath = Paths.get(settings.configPath);
 		Path factorioDataPath = Paths.get(settings.factorioDataPath);
 		Path factorioProfilesPath = Paths.get(settings.factorioProfilesPath);
-		Integer moveMethod = new Integer(settings.moveMethod);
-		Boolean closeOnLaunch = new Boolean(settings.closeOnLaunch);
-		Boolean hasInitialized = new Boolean(settings.hasInitialized);
+		Integer moveMethod = settings.moveMethod;
+		Boolean closeOnLaunch = settings.closeOnLaunch;
+		Boolean hasInitialized = settings.hasInitialized;
 		Path activeProfilePath = settings.activeProfilePath == null ? null : Paths.get(settings.activeProfilePath);
 		
 		ObservableList<FactorioInstallation> factorioInstallations = FXCollections.observableArrayList();
@@ -205,8 +205,8 @@ public class SettingsIO {
 				FileLocations.getFactorioUserDataDirectory().resolve(FileLocations.DIR_PROFILE_NAME)
 				);
 		
-		registry.setCloseOnLaunch(new Boolean(true));
-		registry.setHasInitialized(new Boolean(false));
+		registry.setCloseOnLaunch(true);
+		registry.setHasInitialized(false);
 		
 		
 		// Try to find Factorio installation path

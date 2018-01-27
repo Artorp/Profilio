@@ -164,7 +164,7 @@ public class SettingsController {
 				defaultActiveProfile.setIsActive(true);
 				myRegistry.setActiveProfile(defaultActiveProfile);
 				mainController.setupDirectoryWatcher(myRegistry.getFactorioProfilesPath());
-				myRegistry.setHasInitialized(new Boolean(true));
+				myRegistry.setHasInitialized(true);
 			}
 		});
 		
