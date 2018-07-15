@@ -1,12 +1,17 @@
 package no.artorp.profilio.utility;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.Writer;
 import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -56,7 +61,8 @@ public class SettingsIO {
 				.setPrettyPrinting()
 				.create();
 		String json_string = gson.toJson(settingsObject);
-		try (Writer writer = new FileWriter(settingsFile, false)) {
+		try (Writer writer = new BufferedWriter(
+				new OutputStreamWriter(new FileOutputStream(settingsFile), StandardCharsets.UTF_8))) {
 			writer.write(json_string);
 		}
 	}
@@ -74,9 +80,18 @@ public class SettingsIO {
 	}
 	
 	public SettingsJson loadSettings() throws IOException {
+		// Read the settings file
+		StringBuilder sb = new StringBuilder();
+		try (Reader r = new InputStreamReader(new FileInputStream(settingsFile), StandardCharsets.UTF_8);
+				BufferedReader br = new BufferedReader(r)) {
+			String line = null;
+			while ((line = br.readLine()) != null) {
+				sb.append(line).append('\n');
+			}
+		}
+		String json_string = sb.toString();
+		// Parse settings json string into POJO object
 		Gson gson = new Gson();
-		byte[] json_bytes = Files.readAllBytes(settingsFile.toPath());
-		String json_string = new String(json_bytes, StandardCharsets.UTF_8);
 		SettingsJson settings = gson.fromJson(json_string, SettingsJson.class);
 		return settings;
 	}
