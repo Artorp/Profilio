@@ -40,7 +40,7 @@ public class DirectoryWatcher implements Runnable {
 		this.keys = new HashMap<WatchKey, Path>();
 		this.recursive = recursive;
 		
-		LOGGER.setLevel(Level.FINE); // TODO: Remove verbose logging
+		LOGGER.setLevel(Level.FINE);
 		
 		if (recursive) {
 			LOGGER.info(String.format("Scanning %s ...", dir));
